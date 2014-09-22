@@ -17,7 +17,9 @@ You have two ways to fetch silk log data and process it
 ####silk.py
 Execute silk.py directly
 ```
-$ python silk.py /path/to/logfile
+$ python silk.py /path/to/pattern_file /path/to/log_file
+Example 
+$ python silk.py silk_input_resample.pattern log.txt
 ```
 ####SilkProfiler.py
 Import SilkProfiler module and call SileProfiler API on demand.
@@ -25,8 +27,8 @@ Import SilkProfiler module and call SileProfiler API on demand.
 $ cd /path/to/SiklProfiler.py
 $ python
   >>>import SilkProfiler as SP
-  >>> profiler = SP.SilkProfiler("Silk input resample")
-  >>> profiler.Open("/path/to/logfile")
+  >>> profiler = SP.SilkProfiler()
+  >>> profiler.Open("/path/to/patternfile", "/path/to/logfile")
   True 
   >>> profiler.Parse()
   ## After Parse(), data is ready for presentation.

@@ -22,12 +22,12 @@ $ python silk.py /path/to/pattern_file /path/to/log_file
 Example 
 $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
-####SilkProfiler.py
+####silk_profiler.py
 Import SilkProfiler module and call SileProfiler API on demand.
 ```
-$ cd /path/to/SilkProfiler.py
+$ cd /path/to/silk_profiler.py
 $ python
-  >>>import SilkProfiler as SP
+  >>>import silk_profiler as SP
   >>> profiler = SP.SilkProfiler()
   >>> profiler.Open("/path/to/patternfile", "/path/to/logfile")
   True << Check this value

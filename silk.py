@@ -1,4 +1,4 @@
-import SilkProfiler as SP
+import silk_profiler as SP
 import sys
 
 if len(sys.argv) < 3:

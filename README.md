@@ -1,5 +1,5 @@
 #Project Silk Profiler
-![img](https://github.com/CJKu/pysilk/blob/master/silk.png)
+![img](https://github.com/CJKu/pysilk/blob/master/img/silk.png)
 
 Analysis output data of silk and present in visual way
 
@@ -42,7 +42,7 @@ $ python
 ```
 
 By calling SilkProfiler.Draw, matplot window popup and display samples in a trend diagram
-![img](https://github.com/CJKu/pysilk/blob/master/matplot.png)
+![img](https://github.com/CJKu/pysilk/blob/master/img/matplot.png)
 
 #Tesing
 * [Testing framework](https://docs.python.org/2/library/unittest.html#module-unittest)

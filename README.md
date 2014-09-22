@@ -1,5 +1,5 @@
 #Project Silk Profiler
-![img](https://wiki.mozilla.org/File:Silk_thread_model.png)
+![img](ttps://github.com/CJKu/pysilk/blob/master/silk.png)
 
 Analysis output data of silk and present in visual way
 

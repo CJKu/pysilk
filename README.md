@@ -12,7 +12,7 @@ $ python silk.py /path/to/logfile
 ```
 - Import SilkProfiler module and call SileProfiler API on demand.
 ```
-$ cd ${where SilkProfiler.py locate}
+$ cd /path/to/SiklProfiler.py
 $ python
   >>>import SilkProfiler as SP
   >>> profiler = SP.SilkProfiler("Silk input resample")

@@ -13,11 +13,13 @@ Analysis output data of silk and present in visual way
 # Steps
 You have two ways to fetch silk log data and process it
 
-- Execute silk.py directly
+####silk.py
+Execute silk.py directly
 ```
 $ python silk.py /path/to/logfile
 ```
-- Import SilkProfiler module and call SileProfiler API on demand.
+####SilkProfiler.py
+Import SilkProfiler module and call SileProfiler API on demand.
 ```
 $ cd /path/to/SiklProfiler.py
 $ python

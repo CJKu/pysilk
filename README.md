@@ -1,7 +1,7 @@
 #Project Silk Profiler
 ![img](https://github.com/CJKu/pysilk/blob/master/img/silk.png)
 
-Analysis output data of silk and present in visual way
+To profile project silk, we need a very light-weight tool to analysis output data of gecko::silk and present those data in a visual way.
 
 [What's project silk?](https://wiki.mozilla.org/Project_Silk)
 

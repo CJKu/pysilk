@@ -6,11 +6,11 @@
 # Steps
 You have two ways to fetch silk log data and process it
 
-- execute silk.py
+- Execute silk.py directly
 ```
 $ python silk.py /path/to/logfile
 ```
-- import SilkProfiler
+- Import SilkProfiler module and call SileProfiler API on demand.
 ```
 $ cd ${where SilkProfiler.py locate}
 $ python

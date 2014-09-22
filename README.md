@@ -27,4 +27,5 @@ $ python
   >>> profiler.Print()
   # 3. Display statistic data
   >>> profiler.Statistic()
-``` 
+```
+![img](https://github.com/CJKu/pysilk/blob/master/matplot.png)

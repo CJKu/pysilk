@@ -19,7 +19,7 @@ Execute silk.py directly
 ```
 $ python silk.py /path/to/pattern_file /path/to/log_file
 Example 
-$ python silk.py silk_input_resample.pattern log.txt
+$ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
 ####SilkProfiler.py
 Import SilkProfiler module and call SileProfiler API on demand.

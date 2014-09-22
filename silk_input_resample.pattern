@@ -1,0 +1,4 @@
+# group name x = x-axis of trend diagram
+# group name y = y-axis of trend diagram
+pattern=.*Silk input resample *, *(?P<x>[0-9]+) *, *(?P<y>[.0-9]+).*
+

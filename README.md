@@ -42,8 +42,26 @@ $ python
   >>> profiler.Statistic()
 ```
 
-By calling SilkProfiler.Draw(), matplot window popup and display samples in a trend diagram
+####Result
+SilkProfiler.Draw()
 ![img](https://github.com/CJKu/pysilk/blob/master/img/matplot.png)
+
+SilkProfiler.Print()
+```
+frame number = 196826 / touch event distance = 0.016
+frame number = 196827 / touch event distance = 0.030
+frame number = 196828 / touch event distance = 0.037
+frame number = 196829 / touch event distance = 0.029
+frame number = 196830 / touch event distance = 0.037
+frame number = 196831 / touch event distance = 0.024
+```
+
+SilkProfiler.Statistic()
+```
+Total samples = 33
+standard deviation = 0.0145458964579
+Mean = 0.0204848484848
+```
 
 #Testing
 * [Testing framework](https://docs.python.org/2/library/unittest.html#module-unittest)

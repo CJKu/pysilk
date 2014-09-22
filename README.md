@@ -28,4 +28,6 @@ $ python
   # 3. Display statistic data
   >>> profiler.Statistic()
 ```
+
+By calling SilkProfiler.Draw, matplot window popup and display samples in a trend diagram
 ![img](https://github.com/CJKu/pysilk/blob/master/matplot.png)

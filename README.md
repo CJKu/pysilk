@@ -42,6 +42,5 @@ By calling SilkProfiler.Draw, matplot window popup and display samples in a tren
 #Tesing
 * [Testing framework](https://docs.python.org/2/library/unittest.html#module-unittest)
 * Test cases
-** Parser - a source file with matched and mismatched line log. Evalute number of
-matched ones.
-** Function call dependency - call Parse before Open
+  * Parser - a source file with matched and mismatched line log. Evalute number of matched ones.
+  * Function call dependency - call Parse before Open

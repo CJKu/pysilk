@@ -8,7 +8,7 @@ Analysis output data of silk and present in visual way
 [Where is source code of silk?](https://github.com/JerryShih/gecko-dev/tree/silk-all)
 
 #Prerequisite
-* [Install mathplot](http://matplotlib.org/users/installing.html)
+* [Install matplot](http://matplotlib.org/users/installing.html)
 * Pythob 2.X
 
 # Steps

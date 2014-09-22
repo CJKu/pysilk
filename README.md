@@ -1,15 +1,17 @@
 
 #Prerequisite
-* (Install mathplot)[ http://matplotlib.org/users/installing.html]
+* [Install mathplot](http://matplotlib.org/users/installing.html)
 * Pythob 2.X
 
-# Steps 
+# Steps
 You have two ways to fetch silk log data and process it
+
 1. execute silk.py
 ```
 $ python silk.py ${logfilename}
 ```
 Or
+
 2. import SilkProfiler
 ```
 $ cd ${where SilkProfiler.py locate}

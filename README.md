@@ -10,8 +10,6 @@ You have two ways to fetch silk log data and process it
 ```
 $ python silk.py ${logfilename}
 ```
-Or
-
 2. import SilkProfiler
 ```
 $ cd ${where SilkProfiler.py locate}

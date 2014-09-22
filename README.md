@@ -9,13 +9,13 @@ Analysis output data of silk and present in visual way
 
 #Prerequisite
 * [Install matplot](http://matplotlib.org/users/installing.html)
-* Pythob 2.X
+* Pythob 2.7
 
 # Steps
 You have two ways to fetch silk log data and process it
 
 ####silk.py
-Execute silk.py directly
+An easier way. Just execute silk.py directly.
 ```
 $ python silk.py /path/to/pattern_file /path/to/log_file
 Example 
@@ -29,7 +29,7 @@ $ python
   >>>import SilkProfiler as SP
   >>> profiler = SP.SilkProfiler()
   >>> profiler.Open("/path/to/patternfile", "/path/to/logfile")
-  True 
+  True << Check this value
   >>> profiler.Parse()
   ## After Parse(), data is ready for presentation.
   # Depend on your need, you may
@@ -41,11 +41,16 @@ $ python
   >>> profiler.Statistic()
 ```
 
-By calling SilkProfiler.Draw, matplot window popup and display samples in a trend diagram
+By calling SilkProfiler.Draw(), matplot window popup and display samples in a trend diagram
 ![img](https://github.com/CJKu/pysilk/blob/master/img/matplot.png)
 
-#Tesing
+#Testing
 * [Testing framework](https://docs.python.org/2/library/unittest.html#module-unittest)
 * Test cases
   * Parser - a source file with matched and mismatched line log. Evalute number of matched ones.
   * Function call dependency - call Parse before Open
+
+#TBD
+* Test cases.
+* More statistic result
+* Save to DHTML

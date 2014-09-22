@@ -19,12 +19,12 @@ $ python
   >>> profiler.Open("/path/to/logfile")
   True 
   >>> profiler.Parse()
-  ## Then, data is ready to be presented.
-  # Depend on you need
-  # 1. Ifyou want to see trend diagram
+  ## After Parse(), data is ready for presentation.
+  # Depend on your need, you may
+  # 1. Display trend diagram
   >>> profiler.Draw()
-  # 2. For raw sample
+  # 2. Display raw samples
   >>> profiler.Print()
-  # 3. Statistic data
+  # 3. Display statistic data
   >>> profiler.Statistic()
 ``` 

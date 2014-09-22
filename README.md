@@ -8,7 +8,7 @@ You have two ways to fetch silk log data and process it
 
 - execute silk.py
 ```
-$ python silk.py ${logfilename}
+$ python silk.py /path/to/logfile
 ```
 - import SilkProfiler
 ```
@@ -16,7 +16,7 @@ $ cd ${where SilkProfiler.py locate}
 $ python
   >>>import SilkProfiler as SP
   >>> profiler = SP.SilkProfiler("Silk input resample")
-  >>> profiler.Open("~/Downloads/log.txt")
+  >>> profiler.Open("/path/to/logfile")
   True 
   >>> profiler.Parse()
   ## Then, data is ready to be presented.

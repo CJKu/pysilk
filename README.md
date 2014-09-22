@@ -1,4 +1,10 @@
 
+Prerequisite
+  Install mathplot
+  http://matplotlib.org/users/installing.html
+  Pythob 2.X
+ 
+You have two ways to fetch silk log data and process it
 1. execute silk.py
 $ python silk.py ${logfilename}
 

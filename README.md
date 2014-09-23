@@ -34,6 +34,8 @@ In [1]: %run create_profiler_in_ipython.py  # Create profiler object
 In [2]: profiler.Draw(SP.Histogram.Line)    # Draw line chart
 In [3]: profiler.Draw(SP.Histogram.Bar)     # Draw bar chart
 In [4]: profiler.Draw(SP.Histogram.All)     # Draw all supported chart
+In [5]: profiler.DumpSamples()              # Dump silk raw samples
+In [5]: profiler.Statistic()                # Dump statistic data
 ```
 ![img](https://github.com/CJKu/pysilk/blob/master/img/ipython2.png)
 

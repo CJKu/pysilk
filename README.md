@@ -72,3 +72,4 @@ Standard deviation = 0.0145458964579
 * Test cases.
 * More statistic result
 * Save to DHTML
+* adb command to start/ stop silk log dumping

@@ -99,13 +99,92 @@ class SilkParser(object):
     print "misMatched = " + str(self.mMismatches);
     return True
 
+class SilkDrawer(object):
+  """
+  Histogram drawer
+  """
+  def Line(self, yPlots, xLabel, yLabel):
+    """
+      Draw line histogram.
+    """
+    self._EvaluateHistogramSize(len(yPlots))
+    plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
+        markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
+        markersize=6)
+
+    plt.grid(True)
+    plt.xlabel(xLabel)
+    plt.ylabel(yLabel)
+    plt.show()
+
+  def Bar(self, yPlots, xLabel, yLabel):
+    """
+      Draw bar histogram
+    """
+    self._EvaluateHistogramSize(10)
+    minPlot = np.min(yPlots)
+    maxPlot = np.max(yPlots)
+
+    # All yPlots have the same value. Perfect condition
+    if minPlot == maxPlot:
+      plt.bar([2], [len(yPlots)])
+      return
+
+    # Divide yPlots into 10 groups
+    # it's.... so uglyyyyyy... find a better way.
+    ranges = np.linspace(minPlot, maxPlot, 10).tolist()
+
+    accounts = [0] * 10
+    for plot in yPlots:
+      for i,n in enumerate(ranges):
+        if plot <= n:
+          accounts[i] += 1
+          break
+
+    # Round xticks to shrink the space between ticks
+    xTickLabels = ranges;
+    for i,n in enumerate(xTickLabels) :
+      xTickLabels[i] = round(xTickLabels[i], 3)
+
+    xTickPositions = np.linspace(0.5, 10.5, 10).tolist()
+    plt.xticks(xTickPositions, xTickLabels)
+
+    # Draw bar chart.
+    barPositions = np.linspace(0., 10., 10).tolist()
+    plt.bar(barPositions, accounts)
+
+    plt.xlabel(yLabel)
+    plt.ylabel("amount")
+    plt.show()
+
+  def _EvaluateHistogramSize(self, samples):
+    F = pylab.gcf()
+    DPI = F.get_dpi()
+    DefaultSize = F.get_size_inches()
+
+    # Display 300 samples, 5 seconds, in 2880-width histogram
+    # Which means distance between each sample is 2800 / 300.
+    # Keep this density unless we get more then 300 samples
+    minWidth = DefaultSize[1] * 1.618034
+    maxWidth = 2800 / DPI
+    width = maxWidth
+    fixHeight = 480 / DPI
+
+    ratio = 300.0 / float(samples)
+    if ratio > 1.0:
+      width = width / ratio
+    if width < minWidth:
+      width = minWidth
+    plt.figure(figsize=(width, fixHeight))
+
 class SilkProfiler(object):
   """
-  1. Aggregate file parser.
-  2. Report generator
+  1. Aggregate mParser to parser soruce log and pattern
+  2. Aggregate mDrawer to generate histogram
   """
   def __init__(self):
     self.mParser = SilkParser()
+    self.mDrawer = SilkDrawer()
 
   def Open(self, pattern, source):
     patternFile = None
@@ -169,12 +248,12 @@ class SilkProfiler(object):
       yPlots.append(float(entry[1]))
 
     if histogram == Histogram.Line:
-      self._DrawLineHistogram(yPlots)
+      self.mDrawer.Line(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
     elif histogram == Histogram.Bar:
-      self._DrawBarHistogram(yPlots)
+      self.mDrawer.Bar(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
     elif histogram == Histogram.All:
-      self._DrawLineHistogram(yPlots)
-      self._DrawBarHistogram(yPlots)
+      self.mDrawer.Line(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
+      self.mDrawer.Bar(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
 
     return True
 
@@ -186,78 +265,4 @@ class SilkProfiler(object):
     """
 
     return True
-
-  def _EvaluateHistogramSize(self, samples):
-    F = pylab.gcf()
-    DPI = F.get_dpi()
-    DefaultSize = F.get_size_inches()
-
-    # Display 300 samples, 5 seconds, in 2880-width histogram
-    # Which means distance between each sample is 2800 / 300.
-    # Keep this density unless we get more then 300 samples
-    minWidth = DefaultSize[1] * 1.618034
-    maxWidth = 2800 / DPI
-    width = maxWidth
-    fixHeight = 480 / DPI
-
-    ratio = 300.0 / float(samples)
-    if ratio > 1.0:
-      width = width / ratio
-    if width < minWidth:
-      width = minWidth
-    plt.figure(figsize=(width, fixHeight))
-
-  def _DrawLineHistogram(self, yPlots):
-    """
-      Draw line histogram.
-    """
-    self._EvaluateHistogramSize(len(yPlots))
-    plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
-        markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
-        markersize=6)
-
-    plt.grid(True)
-    plt.xlabel(self.mParser.mXLabel)
-    plt.ylabel(self.mParser.mYLabel)
-    plt.show()
-
-  def _DrawBarHistogram(self, yPlots):
-    """
-      Draw bar histogram
-    """
-    self._EvaluateHistogramSize(10)
-    minPlot = np.min(yPlots)
-    maxPlot = np.max(yPlots)
-
-    # All yPlots have the same value. Perfect condition
-    if minPlot == maxPlot:
-      plt.bar([2], [len(yPlots)])
-      return
-
-    # Divide yPlots into 10 groups
-    # it's.... so uglyyyyyy... find a better way.
-    ranges = np.linspace(minPlot, maxPlot, 10).tolist()
-
-    accounts = [0] * 10
-    for plot in yPlots:
-      for i,n in enumerate(ranges):
-        if plot <= n:
-          accounts[i] += 1
-          break
-
-    # Round xticks to shrink the space between ticks
-    xTickLabels = ranges;
-    for i,n in enumerate(xTickLabels) :
-      xTickLabels[i] = round(xTickLabels[i], 3)
-
-    xTickPositions = np.linspace(0.5, 10.5, 10).tolist()
-    plt.xticks(xTickPositions, xTickLabels)
-
-    # Draw bar chart.
-    barPositions = np.linspace(0., 10., 10).tolist()
-    plt.bar(barPositions, accounts)
-
-    plt.xlabel(self.mParser.mYLabel)
-    plt.ylabel("amount")
-    plt.show()
 

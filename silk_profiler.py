@@ -142,32 +142,36 @@ class SilkProfiler(object):
     """
       Draw bar histogram
     """
-    # Divide yPlots into 10 groups
     minPlot = np.min(yPlots)
     maxPlot = np.max(yPlots)
 
-    if minPlot == maxPlot: # Perfect condition
+    # All yPlots have the same value. Perfect condition
+    if minPlot == maxPlot:
       plt.bar([2], [len(yPlots)])
       return
 
-    xPositions = np.linspace(0., 10., 10).tolist()
+    # Divide yPlots into 10 groups
+    # it's.... so uglyyyyyy... find a better way.
     ranges = np.linspace(minPlot, maxPlot, 10).tolist()
 
-    # it's.... so uglyyyyyy... find a better way.
-    buckets = [0] * 10
+    accounts = [0] * 10
     for plot in yPlots:
-      for i in ranges:
-        if plot <= i:
-          buckets[ranges.index(i)] += 1
+      for i,n in enumerate(ranges):
+        if plot <= n:
+          accounts[i] += 1
           break
 
-    xTickLabel = ranges;
-    for i,n in enumerate(xTickLabel) :
-      xTickLabel[i] = round(xTickLabel[i], 3)
+    # Round xticks to shrink the space between ticks
+    xTickLabels = ranges;
+    for i,n in enumerate(xTickLabels) :
+      xTickLabels[i] = round(xTickLabels[i], 3)
 
-    xTickPosition = np.linspace(0.5, 10.5, 10).tolist()
-    plt.xticks(xTickPosition, xTickLabel)
-    plt.bar(xPositions, buckets)
+    xTickPositions = np.linspace(0.5, 10.5, 10).tolist()
+    plt.xticks(xTickPositions, xTickLabels)
+
+    # Draw bar chart.
+    barPositions = np.linspace(0., 10., 10).tolist()
+    plt.bar(barPositions, accounts)
 
   def Print(self):
     if False == self.mInit:

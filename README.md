@@ -18,7 +18,7 @@ Although iPython is not must have, I still recommend you install this advance sh
 # Steps
 You have two ways to fetch silk log data and process it
 
-####silk.py
+####Rub silk.py in console
 Execute silk.py in console directly.
 ```
 $ cd /path/to/silk.py
@@ -26,7 +26,7 @@ $ python silk.py /path/to/pattern_file /path/to/log_file
 Example 
 $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
-####create_profiler_in_ipython.py
+####Run create_profiler_in_ipython.py in ipython::qtconsol
 ```
 $ cd /path/to/silk_profiler.py
 $ ipython qtconsole --pylab=inline

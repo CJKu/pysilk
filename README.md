@@ -45,21 +45,21 @@ SilkProfiler.Draw(SP.Histogram.Line)
 SilkProfiler.Draw(SP.Histogram.Bar)
 ![img](https://github.com/CJKu/pysilk/blob/master/img/barchart.png)
 
-SilkProfiler.Print()
+SilkProfiler.DumpSamples()
 ```
-frame number = 196826 / touch event distance = 0.016
-frame number = 196827 / touch event distance = 0.030
-frame number = 196828 / touch event distance = 0.037
-frame number = 196829 / touch event distance = 0.029
-frame number = 196830 / touch event distance = 0.037
-frame number = 196831 / touch event distance = 0.024
+1.  frame number = 196826 / touch event distance = 0.016
+2.  frame number = 196827 / touch event distance = 0.030
+3.  frame number = 196828 / touch event distance = 0.037
+4.  frame number = 196829 / touch event distance = 0.029
+5.  frame number = 196830 / touch event distance = 0.037
+6.  frame number = 196831 / touch event distance = 0.024
 ```
 
 SilkProfiler.Statistic()
 ```
-Total samples = 33
+Total samples      = 33
 standard deviation = 0.0145458964579
-Mean = 0.0204848484848
+Mean               = 0.0204848484848
 ```
 
 #Testing

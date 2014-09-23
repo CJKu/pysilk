@@ -6,5 +6,3 @@ if False == profiler.Open("./sample/silk_input_resample.pattern", "./sample/log.
   print "Pattern file or source log file is not exist."
   sys.exit(1)
 
-if False == profiler.Parse():
-  print "Make sure calls Open before Parse"

@@ -28,13 +28,11 @@ class SilkProfiler(object):
     self.mPattern = None    # pattern object
     self.mMatches = 0       # total amount of matched lines.
     self.mMismatches = 0    # total amount of mismatched lines
-    self.mTable = []        # Store peformance data
+    self.mTable = []        # The most important member. Store sample data
     self.mSource = None     # Soure log file.
-    self.mInit = False
 
   def Open(self, pattern, source):
     patternFile = None
-    self.mInit = False
     try:
       self.mSource = open(source, 'r')
       patternFile = open(pattern, 'r')
@@ -54,8 +52,7 @@ class SilkProfiler(object):
 
       return False
 
-    self.mInit = True
-    return True
+    return self._Parse()
 
   def _ReadPattern(self, patternFile):
     """
@@ -71,6 +68,7 @@ class SilkProfiler(object):
       if m != None:
         patternLine = m.group(1)
         self.mPattern = re.compile(patternLine)
+        print "Pattern  = " + patternLine
         break
 
     # [Option] Read x-label string
@@ -80,6 +78,7 @@ class SilkProfiler(object):
       m = re.search('^xlabel[ ]*=[ ]*(.+)', line)
       if m != None:
         self.mXLabel = m.group(1)
+        print "xlabel  = " + self.mXLabel
         break
 
     # [Option] Read y-label string
@@ -89,14 +88,12 @@ class SilkProfiler(object):
       m = re.search('^ylabel[ ]*=[ ]*(.+)', line)
       if m != None:
         self.mYLabel = m.group(1)
+        print "xlabel  = " + self.mYLabel
         break
 
     return (self.mPattern != None)
 
-  def Parse(self):
-    if False == self.mInit:
-      return False
-
+  def _Parse(self):
     # Clear mTable
     del self.mTable[:]
 
@@ -118,12 +115,11 @@ class SilkProfiler(object):
       else:
         self.mMismatches += 1
 
+    print "Matched    = " + str(self.mMatches);
+    print "misMatched = " + str(self.mMismatches);
     return True
 
   def Draw(self, histogram = Histogram.Line):
-    if False == self.mInit:
-      return False
-
     yPlots = []
     for entry in self.mTable:
       yPlots.append(float(entry[1]))
@@ -216,9 +212,6 @@ class SilkProfiler(object):
     """
     Print all samples on stdout
     """
-    if False == self.mInit:
-      return False
-
     for entry in self.mTable:
       print self.mXLabel + " = " + entry[0] + " / " + self.mYLabel + " = " + entry[1]
 
@@ -231,16 +224,13 @@ class SilkProfiler(object):
       2. stddev
       3. mean value
     """
-    if False == self.mInit:
-      return False
-
     dists = []
     for entry in self.mTable:
       dists.append(float(entry[1]))
 
-    print "Total samples = " + str(len(self.mTable))
-    print "standard deviation = " + str(np.std(dists))
-    print "Mean = " + str(np.mean(dists))
+    print "Total samples      : " + str(len(self.mTable))
+    print "Mean               : " + str(np.mean(dists))
+    print "Standard deviation : " + str(np.std(dists))
     return True
 
   def SaveTo(self, html):
@@ -249,7 +239,5 @@ class SilkProfiler(object):
       2. Save mTable in HTML table
       3. Save statistic data.
     """
-    if False == self.mInit:
-      return False
 
     return True

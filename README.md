@@ -19,32 +19,20 @@ Although iPython is not must have, I still recommend you install this advance sh
 You have two ways to fetch silk log data and process it
 
 ####silk.py
-An easier way. Just execute silk.py directly.
+Execute silk.py in console directly.
 ```
 $ cd /path/to/silk.py
 $ python silk.py /path/to/pattern_file /path/to/log_file
 Example 
 $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
-####silk_profiler.py
-Import SilkProfiler module and call SileProfiler API on demand.
+####create_profiler_in_ipython.py
+%run create_profiler_in_ipython.py
 ```
 $ cd /path/to/silk_profiler.py
-$ python
-  >>>import silk_profiler as SP
-  >>> profiler = SP.SilkProfiler()
-  >>> profiler.Open("/path/to/patternfile", "/path/to/logfile")
-  True << Check this value
-  >>> profiler.Parse()
-  ## After Parse(), data is ready for presentation.
-  # Depend on your need, you may
-  # 1. Display trend diagram
-  >>> profiler.Draw()
-  # 2. Display raw samples
-  >>> profiler.Print()
-  # 3. Display statistic data
-  >>> profiler.Statistic()
-```
+%run create_profiler_in_ipython.py
+$ ipython qtconsole --pylab=inline
+![img](https://github.com/CJKu/pysilk/blob/master/img/ipython2.png)
 
 ####Result
 SilkProfiler.Draw(SP.Histogram.Line)

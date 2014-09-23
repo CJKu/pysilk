@@ -28,7 +28,6 @@ $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
 ####create_profiler_in_ipython.py
 %run create_profiler_in_ipython.py
-```
 $ cd /path/to/silk_profiler.py
 %run create_profiler_in_ipython.py
 $ ipython qtconsole --pylab=inline

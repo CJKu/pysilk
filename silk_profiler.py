@@ -54,6 +54,57 @@ class SilkProfiler(object):
 
     return self._Parse()
 
+  def DumpSamples(self):
+    """
+    Print all samples on stdout
+    """
+    i = 1
+    for entry in self.mTable:
+      print str(i) + ".\t" + self.mXLabel + " = " + entry[0] + " / " + self.mYLabel + " = " + entry[1]
+      i += 1
+
+    return True
+
+  def Statistic(self):
+    """
+      Print statistic data on stdout.
+      1. Total samples: number of silk line-log
+      2. stddev
+      3. mean value
+    """
+    dists = []
+    for entry in self.mTable:
+      dists.append(float(entry[1]))
+
+    print "Total samples      : " + str(len(self.mTable))
+    print "Mean               : " + str(np.mean(dists))
+    print "Standard deviation : " + str(np.std(dists))
+    return True
+
+  def Draw(self, histogram = Histogram.Line):
+    yPlots = []
+    for entry in self.mTable:
+      yPlots.append(float(entry[1]))
+
+    if histogram == Histogram.Line:
+      self._DrawLineHistogram(yPlots)
+    elif histogram == Histogram.Bar:
+      self._DrawBarHistogram(yPlots)
+    elif histogram == Histogram.All:
+      self._DrawLineHistogram(yPlots)
+      self._DrawBarHistogram(yPlots)
+
+    return True
+
+  def SaveTo(self, html):
+    """
+      1. Save matplot image
+      2. Save mTable in HTML table
+      3. Save statistic data.
+    """
+
+    return True
+
   def _ReadPattern(self, patternFile):
     """
     1. Read pattern string
@@ -117,21 +168,6 @@ class SilkProfiler(object):
 
     print "Matched    = " + str(self.mMatches);
     print "misMatched = " + str(self.mMismatches);
-    return True
-
-  def Draw(self, histogram = Histogram.Line):
-    yPlots = []
-    for entry in self.mTable:
-      yPlots.append(float(entry[1]))
-
-    if histogram == Histogram.Line:
-      self._DrawLineHistogram(yPlots)
-    elif histogram == Histogram.Bar:
-      self._DrawBarHistogram(yPlots)
-    elif histogram == Histogram.All:
-      self._DrawLineHistogram(yPlots)
-      self._DrawBarHistogram(yPlots)
-
     return True
 
   def _EvaluateHistogramSize(self, samples):
@@ -208,36 +244,3 @@ class SilkProfiler(object):
     plt.ylabel("amount")
     plt.show()
 
-  def Print(self):
-    """
-    Print all samples on stdout
-    """
-    for entry in self.mTable:
-      print self.mXLabel + " = " + entry[0] + " / " + self.mYLabel + " = " + entry[1]
-
-    return True
-
-  def Statistic(self):
-    """
-      Print statistic data on stdout.
-      1. Total samples: number of silk line-log
-      2. stddev
-      3. mean value
-    """
-    dists = []
-    for entry in self.mTable:
-      dists.append(float(entry[1]))
-
-    print "Total samples      : " + str(len(self.mTable))
-    print "Mean               : " + str(np.mean(dists))
-    print "Standard deviation : " + str(np.std(dists))
-    return True
-
-  def SaveTo(self, html):
-    """
-      1. Save matplot image
-      2. Save mTable in HTML table
-      3. Save statistic data.
-    """
-
-    return True

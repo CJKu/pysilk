@@ -3,6 +3,7 @@ import os
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+import decimal
 
 class Histogram(object):
   Line = 1
@@ -135,6 +136,8 @@ class SilkProfiler(object):
         markersize=6)
         #'o-')
 
+    plt.grid(True)
+
   def _DrawBarHistogram(self, yPlots):
     """
       Draw bar histogram
@@ -147,7 +150,7 @@ class SilkProfiler(object):
       plt.bar([2], [len(yPlots)])
       return
 
-    xPositions = np.linspace(0.5, 9.5, 10).tolist()
+    xPositions = np.linspace(0., 10., 10).tolist()
     ranges = np.linspace(minPlot, maxPlot, 10).tolist()
 
     # it's.... so uglyyyyyy... find a better way.
@@ -158,6 +161,12 @@ class SilkProfiler(object):
           buckets[ranges.index(i)] += 1
           break
 
+    xTickLabel = ranges;
+    for i,n in enumerate(xTickLabel) :
+      xTickLabel[i] = round(xTickLabel[i], 3)
+
+    xTickPosition = np.linspace(0.5, 10.5, 10).tolist()
+    plt.xticks(xTickPosition, xTickLabel)
     plt.bar(xPositions, buckets)
 
   def Print(self):

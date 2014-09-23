@@ -12,7 +12,8 @@ To profile project silk, we need a very light-weight tool to analysis output dat
 * Pythob 2.7
 * [(Optional) Install iPython](http://ipython.org/install.html)
 
-iPython is not must have. But I still recommend you install this python advance shell, which has qtconsol and better integratin with matplot.
+Although iPython is not must have, I still recommend you install this advance shell, which has qtconsole and better integration with matplot. In qtconsol, output histogram of matplot is embedded inside console
+![img](https://github.com/CJKu/pysilk/blob/master/img/ipython.png)
 
 # Steps
 You have two ways to fetch silk log data and process it

@@ -58,8 +58,8 @@ SilkProfiler.DumpSamples()
 SilkProfiler.Statistic()
 ```
 Total samples      = 33
-standard deviation = 0.0145458964579
-Mean               = 0.0204848484848
+Mean value         = 0.0204848484848
+Standard deviation = 0.0145458964579
 ```
 
 #Testing

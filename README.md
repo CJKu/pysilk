@@ -43,8 +43,10 @@ $ python
 ```
 
 ####Result
-SilkProfiler.Draw()
-![img](https://github.com/CJKu/pysilk/blob/master/img/matplot.png)
+SilkProfiler.Draw(SP.Histogram.Line)
+![img](https://github.com/CJKu/pysilk/blob/master/img/linechart.png)
+SilkProfiler.Draw(SP.Histogram.Bar)
+![img](https://github.com/CJKu/pysilk/blob/master/img/barchart.png)
 
 SilkProfiler.Print()
 ```

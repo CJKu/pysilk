@@ -1,9 +1,12 @@
 import sys
 import os
 import re
-import numpy
+import numpy as np
 import matplotlib.pyplot as plt
 
+class Histogram(object):
+  Line = 1
+  Bar = 2
 
 class SilkProfiler(object):
   def __init__(self):
@@ -104,7 +107,7 @@ class SilkProfiler(object):
 
     return True
 
-  def Draw(self):
+  def Draw(self, histogram = Histogram.Line):
     if False == self.mInit:
       return False
 
@@ -112,12 +115,50 @@ class SilkProfiler(object):
     for entry in self.mTable:
       yPlots.append(float(entry[1]))
 
-    plt.plot(yPlots)
+    if histogram == Histogram.Line:
+      self._DrawLineHistogram(yPlots)
+    elif histogram == Histogram.Bar:
+      self._DrawBarHistogram(yPlots)
+
     plt.xlabel(self.mXLabel)
     plt.ylabel(self.mYLabel)
     plt.show()
 
     return True
+
+  def _DrawLineHistogram(self, yPlots):
+    """
+      Draw line histogram.
+    """
+    plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
+        markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
+        markersize=6)
+        #'o-')
+
+  def _DrawBarHistogram(self, yPlots):
+    """
+      Draw bar histogram
+    """
+    # Divide yPlots into 10 groups
+    minPlot = np.min(yPlots)
+    maxPlot = np.max(yPlots)
+
+    if minPlot == maxPlot: # Perfect condition
+      plt.bar([2], [len(yPlots)])
+      return
+
+    xPositions = np.linspace(0.5, 9.5, 10).tolist()
+    ranges = np.linspace(minPlot, maxPlot, 10).tolist()
+
+    # it's.... so uglyyyyyy... find a better way.
+    buckets = [0] * 10
+    for plot in yPlots:
+      for i in ranges:
+        if plot <= i:
+          buckets[ranges.index(i)] += 1
+          break
+
+    plt.bar(xPositions, buckets)
 
   def Print(self):
     if False == self.mInit:
@@ -143,8 +184,8 @@ class SilkProfiler(object):
       dists.append(float(entry[1]))
 
     print "Total samples = " + str(len(self.mTable))
-    print "standard deviation = " + str(numpy.std(dists))
-    print "Mean = " + str(numpy.mean(dists))
+    print "standard deviation = " + str(np.std(dists))
+    print "Mean = " + str(np.mean(dists))
     return True
 
   def SaveTo(self, html):

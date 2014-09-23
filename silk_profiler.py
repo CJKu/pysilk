@@ -14,104 +14,34 @@ class Histogram(object):
   Bar = 2
   All = 10
 
-class SilkProfiler(object):
+class SilkParser(object):
   """
-  Role of this class is kinda ambigous
-  1. source log parser
-  2. histogram generator
-  It's better that constructing these two class and aggregate them
-  in SilkProfiler
+  1. Parse pattern file.
+  2. Parse log file
   """
   def __init__(self):
+    self.mPattern = None    # match pattern
     self.mXLabel = ""       # x-axis label
     self.mYLabel = ""       # y-axis label
-    self.mPattern = None    # pattern object
-    self.mMatches = 0       # total amount of matched lines.
-    self.mMismatches = 0    # total amount of mismatched lines
-    self.mTable = []        # The most important member. Store sample data
-    self.mSource = None     # Soure log file.
+    self.mTable = []        # Store sample data
 
-  def Open(self, pattern, source):
-    patternFile = None
-    try:
-      self.mSource = open(source, 'r')
-      patternFile = open(pattern, 'r')
-      if False == self._ReadPattern(patternFile):
-        patternFile.close()
-        mSource.close()
-        return False
-
-    except IOError as e:
-      if patternFile != None:
-        patternFile.close()
-        patternFile = None
-
-      if self.mSource != None:
-        self.mSource.close()
-        self.mSource = None
-
+  def Parse(self, logFile, patternFile):
+    """
+    Internally, parse log and pattern file
+    """
+    if False == self._ParsePattern(patternFile):
+      return False
+    if False == self._ParseLog(logFile):
       return False
 
-    return self._Parse()
-
-  def DumpSamples(self):
-    """
-    Print all samples on stdout
-    """
-    i = 1
-    for entry in self.mTable:
-      print str(i) + ".\t" + self.mXLabel + " = " + entry[0] + " / " + self.mYLabel + " = " + entry[1]
-      i += 1
-
     return True
 
-  def Statistic(self):
-    """
-      Print statistic data on stdout.
-      1. Total samples: number of silk line-log
-      2. stddev
-      3. mean value
-    """
-    dists = []
-    for entry in self.mTable:
-      dists.append(float(entry[1]))
-
-    print "Total samples      : " + str(len(self.mTable))
-    print "Mean               : " + str(np.mean(dists))
-    print "Standard deviation : " + str(np.std(dists))
-    return True
-
-  def Draw(self, histogram = Histogram.Line):
-    yPlots = []
-    for entry in self.mTable:
-      yPlots.append(float(entry[1]))
-
-    if histogram == Histogram.Line:
-      self._DrawLineHistogram(yPlots)
-    elif histogram == Histogram.Bar:
-      self._DrawBarHistogram(yPlots)
-    elif histogram == Histogram.All:
-      self._DrawLineHistogram(yPlots)
-      self._DrawBarHistogram(yPlots)
-
-    return True
-
-  def SaveTo(self, html):
-    """
-      1. Save matplot image
-      2. Save mTable in HTML table
-      3. Save statistic data.
-    """
-
-    return True
-
-  def _ReadPattern(self, patternFile):
+  def _ParsePattern(self, patternFile):
     """
     1. Read pattern string
     2. Read x-axis label string
     2. Read y-axis label string
     """
-
     # [Mandatory] Read pattern string and create pattern object accordingly
     for line in patternFile:
       # Search pattern string in pattern file
@@ -144,15 +74,14 @@ class SilkProfiler(object):
 
     return (self.mPattern != None)
 
-  def _Parse(self):
+  def _ParseLog(self, logFile):
     # Clear mTable
     del self.mTable[:]
 
-    # Validate source file handle
-    if self.mSource == None:
-      return False
+    self.mMatches = 0
+    self.mMismatches = 0
 
-    for line in self.mSource:
+    for line in logFile:
       matched = re.match(self.mPattern, line)
       if matched:
         try:
@@ -168,6 +97,94 @@ class SilkProfiler(object):
 
     print "Matched    = " + str(self.mMatches);
     print "misMatched = " + str(self.mMismatches);
+    return True
+
+class SilkProfiler(object):
+  """
+  1. Aggregate file parser.
+  2. Report generator
+  """
+  def __init__(self):
+    self.mParser = SilkParser()
+
+  def Open(self, pattern, source):
+    patternFile = None
+    logFile = None
+    try:
+      logFile = open(source, 'r')
+      patternFile = open(pattern, 'r')
+    except IOError as e:
+      if patternFile != None:
+        patternFile.close()
+        patternFile = None
+
+      if logFile != None:
+        logFile.close()
+        lofFile = None
+
+      return False
+
+    # File resource are ready. Start to parse source files
+    ret = self.mParser.Parse(logFile, patternFile)
+
+    # Clean up resource in the end
+    patternFile.close()
+    patternFile = None
+    logFile.close()
+    lofFile = None
+
+    return ret
+
+  def DumpSamples(self):
+    """
+    Print all samples on stdout
+    """
+    i = 1
+    for entry in self.mParser.mTable:
+      print str(i) + ".\t" + self.mParser.mXLabel + " = " + entry[0] + " / " + \
+      self.mParser.mYLabel + " = " + entry[1]
+      i += 1
+
+    return True
+
+  def Statistic(self):
+    """
+      Print statistic data on stdout.
+      1. Total samples: number of silk line-log
+      2. stddev
+      3. mean value
+    """
+    dists = []
+    for entry in self.mParser.mTable:
+      dists.append(float(entry[1]))
+
+    print "Total samples      : " + str(len(self.mParser.mTable))
+    print "Mean               : " + str(np.mean(dists))
+    print "Standard deviation : " + str(np.std(dists))
+    return True
+
+  def Draw(self, histogram = Histogram.Line):
+    yPlots = []
+    for entry in self.mParser.mTable:
+      yPlots.append(float(entry[1]))
+
+    if histogram == Histogram.Line:
+      self._DrawLineHistogram(yPlots)
+    elif histogram == Histogram.Bar:
+      self._DrawBarHistogram(yPlots)
+    elif histogram == Histogram.All:
+      self._DrawLineHistogram(yPlots)
+      self._DrawBarHistogram(yPlots)
+
+    return True
+
+  def SaveTo(self, html):
+    """
+      1. Save matplot image
+      2. Save mTable in HTML table
+      3. Save statistic data.
+    """
+
     return True
 
   def _EvaluateHistogramSize(self, samples):
@@ -200,8 +217,8 @@ class SilkProfiler(object):
         markersize=6)
 
     plt.grid(True)
-    plt.xlabel(self.mXLabel)
-    plt.ylabel(self.mYLabel)
+    plt.xlabel(self.mParser.mXLabel)
+    plt.ylabel(self.mParser.mYLabel)
     plt.show()
 
   def _DrawBarHistogram(self, yPlots):
@@ -240,7 +257,7 @@ class SilkProfiler(object):
     barPositions = np.linspace(0., 10., 10).tolist()
     plt.bar(barPositions, accounts)
 
-    plt.xlabel(self.mYLabel)
+    plt.xlabel(self.mParser.mYLabel)
     plt.ylabel("amount")
     plt.show()
 

@@ -13,6 +13,6 @@ if False == profiler.Open(sys.argv[1], sys.argv[2]):
 
 
 # Profile data presentattion
-profiler.Print()
+profiler.DumpSamples()
 profiler.Statistic()
 profiler.Draw(SP.Histogram.Line)

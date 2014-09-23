@@ -4,6 +4,7 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 import decimal
+import pylab
 
 class Histogram(object):
   """
@@ -11,6 +12,7 @@ class Histogram(object):
   """
   Line = 1
   Bar = 2
+  All = 10
 
 class SilkProfiler(object):
   """
@@ -130,15 +132,37 @@ class SilkProfiler(object):
       self._DrawLineHistogram(yPlots)
     elif histogram == Histogram.Bar:
       self._DrawBarHistogram(yPlots)
-
-    plt.show()
+    elif histogram == Histogram.All:
+      self._DrawLineHistogram(yPlots)
+      self._DrawBarHistogram(yPlots)
 
     return True
+
+  def _EvaluateHistogramSize(self, samples):
+    F = pylab.gcf()
+    DPI = F.get_dpi()
+    DefaultSize = F.get_size_inches()
+
+    # Display 300 samples, 5 seconds, in 2880-width histogram
+    # Which means distance between each sample is 2800 / 300.
+    # Keep this density unless we get more then 300 samples
+    minWidth = DefaultSize[1] * 1.618034
+    maxWidth = 2800 / DPI
+    width = maxWidth
+    fixHeight = 480 / DPI
+
+    ratio = 300.0 / float(samples)
+    if ratio > 1.0:
+      width = width / ratio
+    if width < minWidth:
+      width = minWidth
+    plt.figure(figsize=(width, fixHeight))
 
   def _DrawLineHistogram(self, yPlots):
     """
       Draw line histogram.
     """
+    self._EvaluateHistogramSize(len(yPlots))
     plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
         markersize=6)
@@ -146,11 +170,13 @@ class SilkProfiler(object):
     plt.grid(True)
     plt.xlabel(self.mXLabel)
     plt.ylabel(self.mYLabel)
+    plt.show()
 
   def _DrawBarHistogram(self, yPlots):
     """
       Draw bar histogram
     """
+    self._EvaluateHistogramSize(10)
     minPlot = np.min(yPlots)
     maxPlot = np.max(yPlots)
 
@@ -184,8 +210,12 @@ class SilkProfiler(object):
 
     plt.xlabel(self.mYLabel)
     plt.ylabel("amount")
+    plt.show()
 
   def Print(self):
+    """
+    Print all samples on stdout
+    """
     if False == self.mInit:
       return False
 
@@ -196,7 +226,7 @@ class SilkProfiler(object):
 
   def Statistic(self):
     """
-      Print statistic data on standard output.
+      Print statistic data on stdout.
       1. Total samples: number of silk line-log
       2. stddev
       3. mean value

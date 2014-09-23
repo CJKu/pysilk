@@ -9,7 +9,7 @@ To profile project silk, we need a very light-weight tool to analysis output dat
 
 #Prerequisite
 * [Install matplot](http://matplotlib.org/users/installing.html)
-* Pythob 2.7
+* Python 2.7
 * [(Optional) Install iPython](http://ipython.org/install.html)
 
 Although iPython is not must have, I still recommend you install this advance shell, which has qtconsole and better integration with matplot. In qtconsol, output histogram of matplot is embedded inside console

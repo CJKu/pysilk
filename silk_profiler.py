@@ -6,10 +6,20 @@ import matplotlib.pyplot as plt
 import decimal
 
 class Histogram(object):
+  """
+  Histogram enum.
+  """
   Line = 1
   Bar = 2
 
 class SilkProfiler(object):
+  """
+  Role of this class is kinda ambigous
+  1. source log parser
+  2. histogram generator
+  It's better that constructing these two class and aggregate them
+  in SilkProfiler
+  """
   def __init__(self):
     self.mXLabel = ""       # x-axis label
     self.mYLabel = ""       # y-axis label
@@ -121,8 +131,6 @@ class SilkProfiler(object):
     elif histogram == Histogram.Bar:
       self._DrawBarHistogram(yPlots)
 
-    plt.xlabel(self.mXLabel)
-    plt.ylabel(self.mYLabel)
     plt.show()
 
     return True
@@ -134,9 +142,10 @@ class SilkProfiler(object):
     plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
         markersize=6)
-        #'o-')
 
     plt.grid(True)
+    plt.xlabel(self.mXLabel)
+    plt.ylabel(self.mYLabel)
 
   def _DrawBarHistogram(self, yPlots):
     """
@@ -172,6 +181,9 @@ class SilkProfiler(object):
     # Draw bar chart.
     barPositions = np.linspace(0., 10., 10).tolist()
     plt.bar(barPositions, accounts)
+
+    plt.xlabel(self.mYLabel)
+    plt.ylabel("amount")
 
   def Print(self):
     if False == self.mInit:

@@ -14,7 +14,7 @@ To profile project silk, we need a very light-weight tool to analysis output dat
 * [(Optional) Install iPython](http://ipython.org/install.html)
 ```
 Ubuntu setup
-$ sudo apt-get install python-pip   # in case you never install any python packages
+$ sudo apt-get install python-pip   # in case you have not ever installed any python packages
 $ sudo pip install ipython          # install ipython
 $ sudo pip install pyzmq
 $ sudo pip install Pygments

@@ -221,7 +221,7 @@ class SilkProfiler(object):
 
     return True
 
-  def Statistic(self):
+  def Statistic(self, doPrint = True):
     """
       Print statistic data on stdout.
       1. Total samples: number of silk line-log
@@ -236,9 +236,11 @@ class SilkProfiler(object):
     mean = np.mean(dists)
     stdev = np.std(dists)
 
-    print "Total samples      = " + str(total)
-    print "Mean value         = " + str(mean)
-    print "Standard deviation = " + str(stdev)
+    if doPrint:
+      print "Total samples      = " + str(total)
+      print "Mean value         = " + str(mean)
+      print "Standard deviation = " + str(stdev)
+
     return (total, mean, stdev)
 
   def Draw(self, histogram = Histogram.Line):

@@ -48,12 +48,12 @@ class TestSilkProfilerFunction(unittest.TestCase):
 
     # Only one silk ling log in testlog_one.txt
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.txt"))
-    total = profiler.Statistic()
+    total = profiler.Statistic(False)
     self.failIf(1 != total[0])
 
     # Open and parse testlog.txt
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog.txt"))
-    total, mean, stdev = profiler.Statistic()
+    total, mean, stdev = profiler.Statistic(False)
     self.failIf(10 != total)
     self.failIf(5.5 != mean)
 

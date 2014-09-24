@@ -1,40 +1,14 @@
-I/Gecko   ( 6418): Silk resample , 196826, 0.016
-I/Gecko   ( 6418): Silk input resample , AA, 0.016
-I/Gecko   ( 6418): Silk input resample , 196826, AA
-I/Gecko   ( 6418): Silk input resample , 0.016
-I/Gecko   ( 6418): Silk input resample , 196826
-I/Gecko   ( 6418): Silk input resample
-
-I/Gecko   ( 6418): Silk input resample , 196826, 0.016
-I/Gecko   ( 6418): Silk input resample , 196827, 0.030
-I/Gecko   ( 6418): Silk input resample , 196828, 0.037
-I/Gecko   ( 6418): Silk input resample , 196829, 0.029
-I/Gecko   ( 6418): Silk input resample , 196830, 0.037
-I/Gecko   ( 6418): Silk input resample , 196831, 0.024
-I/Gecko   ( 6418): Silk input resample , 196832, 0.052
-I/Gecko   ( 6418): Silk input resample , 196833, 0.020
-I/Gecko   ( 6418): Silk input resample , 196834, 0.018
-I/Gecko   ( 6418): Silk input resample , 196835, 0.024
-I/Gecko   ( 6418): Silk input resample , 196836, 0.006
-I/Gecko   ( 6418): Silk input resample , 196837, 0.003
-I/Gecko   ( 6418): Silk input resample , 196838, 0.001
-I/Gecko   ( 6418): Silk input resample , 196839, 0.002
-I/Gecko   ( 6418): Silk input resample , 196840, 0.003
-I/Gecko   ( 6418): Silk input resample , 196841, 0.018
-I/Gecko   ( 6418): Silk input resample , 196842, 0.050
-I/Gecko   ( 6418): Silk input resample , 196843, 0.023
-I/Gecko   ( 6418): Silk input resample , 196844, 0.000
-I/Gecko   ( 6418): Silk input resample , 196845, 0.030
-I/Gecko   ( 6418): Silk input resample , 196846, 0.045
-I/Gecko   ( 6418): Silk input resample , 196847, 0.025
-I/Gecko   ( 6418): Silk input resample , 196848, 0.022
-I/Gecko   ( 6418): Silk input resample , 196849, 0.026
-I/Gecko   ( 6418): Silk input resample , 196850, 0.023
-I/Gecko   ( 6418): Silk input resample , 196851, 0.015
-I/Gecko   ( 6418): Silk input resample , 196852, 0.003
-I/Gecko   ( 6418): Silk input resample , 196853, 0.002
-I/Gecko   ( 6418): Silk input resample , 196854, 0.001
-I/Gecko   ( 6418): Silk input resample , 196856, 0.004
-I/Gecko   ( 6418): Silk input resample , 196857, 0.022
-I/Gecko   ( 6418): Silk input resample , 196858, 0.030
-I/Gecko   ( 6418): Silk input resample , 196859, 0.035
+# 10 valide log
+# Total samples      = 10
+# Mean value         = 5.5
+# Standard deviation = 2.87228132327
+I/Gecko   ( 6418): Silk input resample , 196826, 1
+I/Gecko   ( 6418): Silk input resample , 196827, 2
+I/Gecko   ( 6418): Silk input resample , 196828, 3
+I/Gecko   ( 6418): Silk input resample , 196829, 4
+I/Gecko   ( 6418): Silk input resample , 196830, 5
+I/Gecko   ( 6418): Silk input resample , 196831, 6
+I/Gecko   ( 6418): Silk input resample , 196832, 7
+I/Gecko   ( 6418): Silk input resample , 196833, 8
+I/Gecko   ( 6418): Silk input resample , 196834, 9
+I/Gecko   ( 6418): Silk input resample , 196835, 10

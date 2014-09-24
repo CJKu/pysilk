@@ -12,7 +12,14 @@ To profile project silk, we need a very light-weight tool to analysis output dat
 * Python 2.7
 * [html 1.16](https://pypi.python.org/pypi/html)
 * [(Optional) Install iPython](http://ipython.org/install.html)
-
+'''
+Ubuntu setup
+$ sudo apt-get install python-pip   # in case you never install any python packages
+$ sudo pip install ipython          # install ipython
+$ sudo pip install pyzmq
+$ sudo pip install Pygments
+Mac setup... Oops...I have forgotten
+'''
 Although iPython is not a must have, I strongly recommend you install this advanced shell, which has qtconsole and better integration with matplot. In qtconsol, output histogram of matplot is embedded inside console
 ![img](https://github.com/CJKu/pysilk/blob/master/img/ipython.png)
 

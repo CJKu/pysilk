@@ -39,11 +39,11 @@ $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 $ cd /path/to/silk_profiler.py
 $ ipython qtconsole --pylab=inline
 In [1]: %run create_profiler_in_ipython.py  # Create profiler object
-In [2]: profiler.Draw(SP.Histogram.Line)    # Draw line chart
-In [3]: profiler.Draw(SP.Histogram.Bar)     # Draw bar chart
-In [4]: profiler.Draw(SP.Histogram.All)     # Draw all supported chart
-In [5]: profiler.DumpSamples()              # Dump silk raw samples
-In [6]: profiler.Statistic()                # Dump statistic data
+In [2]: SP.profiler.Draw(SP.Histogram.Line)    # Draw line chart
+In [3]: SP.profiler.Draw(SP.Histogram.Bar)     # Draw bar chart
+In [4]: SP.profiler.Draw(SP.Histogram.All)     # Draw all supported chart
+In [5]: SP.profiler.DumpSamples()              # Dump silk raw samples
+In [6]: SP.profiler.Statistic(True)            # Dump statistic data
 ```
 ![img](https://github.com/CJKu/pysilk/blob/master/img/ipython2.png)
 

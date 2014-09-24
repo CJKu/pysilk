@@ -40,14 +40,22 @@ class TestSilkProfilerFunction(unittest.TestCase):
 
     # Only one silk ling log in testlog_one.txt
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.txt"))
-    total = profiler.Statistic(False)
-    self.failIf(1 != total[0])
+    statistic = profiler.Statistic(False)
+    self.failIf(1 != statistic[0])
 
     # Open and parse testlog.txt
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog.txt"))
     total, mean, stdev = profiler.Statistic(False)
     self.failIf(10 != total)
     self.failIf(5.5 != mean)
+
+    # Repeat parsing logs. Make sure context is independent between two parsing
+    # Keep loading testlog_one two times, total samples should not be accumulated.
+    profiler = SP.SilkProfiler()
+    self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.txt"))
+    self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.txt"))
+    statistic = profiler.Statistic(False)
+    self.failIf(1 != statistic[0])
 
 # Run the unittests
 if __name__ == '__main__':

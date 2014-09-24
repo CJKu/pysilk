@@ -29,6 +29,14 @@ class SilkParser(object):
     """
     Internally, parse log and pattern file
     """
+
+    # Clear context before parsing.
+    self.mPattern = None    # match pattern
+    self.mXLabel = ""       # x-axis label
+    self.mYLabel = ""       # y-axis label
+    self.mTable = []        # Store sample data
+
+    # Parsing
     if False == self._ParsePattern(patternFile):
       return False
     if False == self._ParseLog(logFile):
@@ -72,9 +80,6 @@ class SilkParser(object):
     return (self.mPattern != None)
 
   def _ParseLog(self, logFile):
-    # Clear mTable
-    del self.mTable[:]
-
     self.mMatches = 0
     self.mMismatches = 0
 

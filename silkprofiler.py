@@ -237,10 +237,14 @@ class SilkProfiler(object):
     for entry in self.mParser.mTable:
       dists.append(float(entry[1]))
 
-    print "Total samples      = " + str(len(self.mParser.mTable))
-    print "Mean valu          = " + str(np.mean(dists))
-    print "Standard deviation = " + str(np.std(dists))
-    return True
+    total = len(self.mParser.mTable)
+    mean = np.mean(dists)
+    stdev = np.std(dists)
+
+    print "Total samples      = " + str(total)
+    print "Mean value         = " + str(mean)
+    print "Standard deviation = " + str(stdev)
+    return (total, mean, stdev)
 
   def Draw(self, histogram = Histogram.Line):
     yPlots = []

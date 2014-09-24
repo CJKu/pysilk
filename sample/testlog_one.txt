@@ -1,0 +1,11 @@
+# Only one match log line in this file
+# Valid line
+I/Gecko   ( 6418): Silk input resample , 196826, 0.016
+# "Silk input resample" not match
+I/Gecko   ( 6418): Silk inut resample , 196826, 0.016
+# No y group
+I/Gecko   ( 6418): Silk inut resample , 196826
+# Invalid y group
+I/Gecko   ( 6418): Silk input resample , 196826, 0.016AA
+I/Gecko   ( 6418): Silk input resample , 196826, ABC
+

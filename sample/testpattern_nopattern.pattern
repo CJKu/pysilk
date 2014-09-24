@@ -1,0 +1,5 @@
+# No pattern string
+# x-axis label
+xlabel=frame number
+# y-axis lable
+ylabel=touch event distance

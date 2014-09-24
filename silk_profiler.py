@@ -266,3 +266,4 @@ class SilkProfiler(object):
 
     return True
 
+profiler = SilkProfiler()

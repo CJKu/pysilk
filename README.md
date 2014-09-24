@@ -27,7 +27,7 @@ Although iPython is not a must have, I strongly recommend you install this advan
 You have two ways to fetch silk log data and process it
 
 ####Rub silk.py in console
-Execute silk.py in console directly.
+Execute silk.py in console directly. silk.py is a simple sample of using SilkProfiler
 ```
 $ cd /path/to/silk.py
 $ python silk.py /path/to/pattern_file /path/to/log_file
@@ -35,10 +35,11 @@ Example
 $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
 ####Run create_profiler_in_ipython.py in ipython::qtconsol
+In ipython, %run create_profiler_in_ipython.py to open default pattern and log file. It allows you to experience of how to use SilkProfiler's API
 ```
 $ cd /path/to/silk_profiler.py
 $ ipython qtconsole --pylab=inline
-In [1]: %run create_profiler_in_ipython.py  # Create profiler object
+In [1]: %run create_profiler_in_ipython.py     # Create profiler object
 In [2]: SP.profiler.Draw(SP.Histogram.Line)    # Draw line chart
 In [3]: SP.profiler.Draw(SP.Histogram.Bar)     # Draw bar chart
 In [4]: SP.profiler.Draw(SP.Histogram.All)     # Draw all supported chart

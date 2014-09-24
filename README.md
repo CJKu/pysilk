@@ -64,10 +64,13 @@ Standard deviation = 0.0145458964579
 ```
 
 #Testing
-* [Testing framework](https://docs.python.org/2/library/unittest.html#module-unittest)
-* Test cases
-  * Parser - a source file with matched and mismatched line log. Evalute number of matched ones.
-  * Function call dependency - call Parse before Open
+To run test case, simply execute testsilkprofiler.py
+```
+$ cd /path/to/pysilk
+$ python testsilkprofiler.py
+Ran 4 tests in 0.002s
+OK
+```
 
 #TBD
 * Test cases.

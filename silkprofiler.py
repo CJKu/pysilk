@@ -49,7 +49,6 @@ class SilkParser(object):
       if m != None:
         patternLine = m.group(1)
         self.mPattern = re.compile(patternLine)
-        print "Pattern\t\t= " + patternLine
         break
 
     # [Option] Read x-label string
@@ -59,7 +58,6 @@ class SilkParser(object):
       m = re.search('^xlabel[ ]*=[ ]*(.+)', line)
       if m != None:
         self.mXLabel = m.group(1)
-        print "xLabel\t\t= " + self.mXLabel
         break
 
     # [Option] Read y-label string
@@ -69,7 +67,6 @@ class SilkParser(object):
       m = re.search('^ylabel[ ]*=[ ]*(.+)', line)
       if m != None:
         self.mYLabel = m.group(1)
-        print "yLabel\t\t= " + self.mYLabel
         break
 
     return (self.mPattern != None)
@@ -95,8 +92,6 @@ class SilkParser(object):
       else:
         self.mMismatches += 1
 
-    print "Matched\t\t= " + str(self.mMatches);
-    print "Nomatched\t= " + str(self.mMismatches);
     return True
 
 class SilkDrawer(object):

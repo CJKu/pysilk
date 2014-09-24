@@ -11,10 +11,14 @@ class TestSilkProfilerFunction(unittest.TestCase):
     pass
 
   def testCreation(self):
+    print "TestSilkProfilerFunction::testCreation start..."
+
     profiler = SP.SilkProfiler()
     self.assertNotEqual(profiler, None, "Creation test failed")
 
   def testOpen(self):
+    print "TestSilkProfilerFunction::testOpen start..."
+
     profiler = SP.SilkProfiler()
     # Open files which do not exist.
     self.failIf(True == profiler.Open("", ""))
@@ -26,6 +30,8 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/log.txt"))
 
   def testPatternParsing(self):
+    print "TestSilkProfilerFunction::testPatternParsing start..."
+
     profiler = SP.SilkProfiler()
     # Parse invalid log files should return False
     self.failIf(True == profiler.Open("sample/testpattern_empty.pattern", "sample/log.txt"))
@@ -36,6 +42,8 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/log.txt"))
 
   def testLogParsing(self):
+    print "TestSilkProfilerFunction::testLogParsing start..."
+
     profiler = SP.SilkProfiler()
 
     # Only one silk ling log in testlog_one.txt

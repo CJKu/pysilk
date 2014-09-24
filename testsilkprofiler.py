@@ -35,6 +35,16 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(False == profiler.Open("sample/testpattern_patternonly.pattern", "sample/log.txt"))
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/log.txt"))
 
+    # Repeat parsing patterns. Make sure context is independent between two parsing
+    # Parse testpattern_pass, which has xy label and pattern string, and then parse
+    # testpattern_patternonly, which has pattern string only. xy label should be
+    # cleared.
+    profiler = SP.SilkProfiler()
+    self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/log.txt"))
+    self.failIf(False == profiler.Open("sample/testpattern_patternonly.pattern", "sample/log.txt"))
+    self.failIf("" != profiler.mParser.mXLabel)
+    self.failIf("" != profiler.mParser.mYLabel)
+
   def testLogParsing(self):
     profiler = SP.SilkProfiler()
 

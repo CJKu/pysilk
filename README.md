@@ -35,7 +35,7 @@ Example
 $ python silk.py ./sample/silk_input_resample.pattern ./sample/log.txt
 ```
 ####Run create_profiler_in_ipython.py in ipython::qtconsol
-In ipython, %run create_profiler_in_ipython.py to open default pattern and log file. It allows you to experience of how to use SilkProfiler's API
+In ipython, %run create_profiler_in_ipython.py to open default pattern and log file. It allows you to experience  how to use SilkProfiler's API
 ```
 $ cd /path/to/silk_profiler.py
 $ ipython qtconsole --pylab=inline

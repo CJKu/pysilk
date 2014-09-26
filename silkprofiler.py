@@ -190,6 +190,8 @@ class SilkProfiler(object):
 
   def Open(self, pattern, source):
     """
+    Open a log file and parse this log file depend on patterns defined in pattern
+    file.
     >>> pf.Open(1, 1)
     Traceback (most recent call last):
       ...

@@ -65,6 +65,7 @@ Standard deviation = 0.0145458964579
 ```
 
 #Testing
+####unittest
 To run test case, simply execute testsilkprofiler.py
 ```
 $ cd /path/to/pysilk
@@ -76,8 +77,16 @@ Ran 4 tests in 0.002s
 OK
 ```
 
+####unittest
+```
+$ cd /path/to/pysilk
+$ python testsilkprofiler.py -v
+```
 #TBD
-* Test cases.
+* adb controller
+ * Integrate with Jerry's pref setting tool
+ * start/ stop logcat
+* log splitter
+ * split a log file into different ones depend on setup principle
 * More statistic result
 * Save to DHTML
-* adb command to start/ stop silk log dumping

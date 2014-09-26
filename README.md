@@ -65,6 +65,12 @@ Standard deviation = 0.0145458964579
 ```
 
 #Testing
+####doctest
+```
+$ cd /path/to/pysilk
+$ python testsilkprofiler.py -v
+```
+
 ####unittest
 To run test case, simply execute testsilkprofiler.py
 ```
@@ -77,11 +83,6 @@ Ran 4 tests in 0.002s
 OK
 ```
 
-####unittest
-```
-$ cd /path/to/pysilk
-$ python testsilkprofiler.py -v
-```
 #TBD
 * adb controller
  * Integrate with Jerry's pref setting tool

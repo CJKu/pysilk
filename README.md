@@ -31,7 +31,7 @@ Here is an example of how to parse a log file($3) by a pattern file($2)
 $ cd /path/to/silkprofilerloader.py
 $ ipython qtconsole --pylab=inline
 
-In  qtconsole
+#In  qtconsole
 In [1]: %rub silkprofilerloader.py ./sample/testpattern_pass.pattern ./sample/log.txt
 In [2]: SP.profiler.Draw(SP.Histogram.Line)    # Draw line chart
 In [3]: SP.profiler.Draw(SP.Histogram.Bar)     # Draw bar chart
@@ -69,6 +69,12 @@ Standard deviation = 0.0145458964579
 ```
 $ cd /path/to/pysilk
 $ python testsilkprofiler.py -v
+   ...
+   1 items passed all tests:
+       4 tests in __main__.SilkProfiler.Open
+   4 tests in 18 items.
+   4 passed and 0 failed.
+   Test passed.
 ```
 
 ####unittest

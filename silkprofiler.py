@@ -27,7 +27,9 @@ class SilkParser(object):
 
   def Parse(self, logFile, patternFile):
     """
-    Internally, parse log and pattern file
+      Parse patterFile to fetch pattern strings to match logFile.
+      Depend on pattern strings aquired from patternFile, fetch matched line log
+      from logFile.
     """
 
     # Clear context before parsing.
@@ -187,21 +189,30 @@ class SilkProfiler(object):
     self.mDrawer = SilkDrawer()
 
   def Open(self, pattern, source):
+    """
+    >>> pf.Open("", "")
+    Traceback (most recent call last):
+      ...
+    IOError: [Errno 2] No such file or directory: ''
+
+    >>> pf.Open("sample/testpattern_pass.pattern", "")
+    Traceback (most recent call last):
+      ...
+    IOError: [Errno 2] No such file or directory: ''
+
+    >>> pf.Open("", "sample/testlog.txt")
+    Traceback (most recent call last):
+      ...
+    IOError: [Errno 2] No such file or directory: ''
+
+    >>> pf.Open("sample/testpattern_pass.pattern", "sample/testlog.txt")
+    True
+    """
     patternFile = None
     logFile = None
-    try:
-      logFile = open(source, 'r')
-      patternFile = open(pattern, 'r')
-    except IOError as e:
-      if patternFile != None:
-        patternFile.close()
-        patternFile = None
 
-      if logFile != None:
-        logFile.close()
-        lofFile = None
-
-      return False
+    logFile = open(source, 'r')
+    patternFile = open(pattern, 'r')
 
     # File resource are ready. Start to parse source files
     ret = self.mParser.Parse(logFile, patternFile)
@@ -273,3 +284,9 @@ class SilkProfiler(object):
     return True
 
 profiler = SilkProfiler()
+
+if __name__ == "__main__":
+  pf = SilkProfiler()
+  import doctest
+  doctest.testmod()
+

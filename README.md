@@ -25,7 +25,7 @@ Although iPython is not a must have, I strongly recommend you install this advan
 
 # Steps
 
-Here is an example of hwo to parse a log file($3) by using a pattern file($2)
+Here is an example of how to parse a log file($3) by a pattern file($2)
 
 ```
 $ cd /path/to/silkprofilerloader.py

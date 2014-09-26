@@ -190,6 +190,16 @@ class SilkProfiler(object):
 
   def Open(self, pattern, source):
     """
+    >>> pf.Open(1, 1)
+    Traceback (most recent call last):
+      ...
+    TypeError: pattern Must be a string!
+
+    >>> pf.Open("", 1)
+    Traceback (most recent call last):
+      ...
+    TypeError: source Must be a string!
+
     >>> pf.Open("", "")
     Traceback (most recent call last):
       ...
@@ -208,6 +218,11 @@ class SilkProfiler(object):
     >>> pf.Open("sample/testpattern_pass.pattern", "sample/testlog.txt")
     True
     """
+    if not isinstance(pattern, str):
+       raise TypeError("pattern Must be a string!")
+    if not isinstance(source, str):
+       raise TypeError("source Must be a string!")
+
     patternFile = None
     logFile = None
 

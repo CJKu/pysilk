@@ -1,6 +1,7 @@
 import sys
 import os
 import re
+import shutil
 
 splitpatterns = [("input", ".* Begin .*", ".* End .*")]
 
@@ -12,6 +13,7 @@ class SilkLogSplitter(object):
   """
   def __init__(self):
     self.mDirectory = ""
+    self.mOutputCount = 0
 
   def Open(self, sourcedirectory, destdirectory):
     """
@@ -44,13 +46,17 @@ class SilkLogSplitter(object):
 
     # Validate destdirectory and create the destination directory, if need,
     # to store splitted log files
-    if os.path.exists(destdirectory) and os.path.isfile(destdirectory):
-      raise OSError("destdirectory can not be an existed file.")
-    if False == os.path.exists(destdirectory):
-      os.mkdir(destdirectory);
+    if os.path.exists(destdirectory):
+      if os.path.isfile(destdirectory):
+        raise OSError("destdirectory can not be an existed file.")
+      else:
+        shutil.rmtree(destdirectory, ignore_errors=True)
+
+    os.mkdir(destdirectory);
     self.mDirectory = destdirectory
 
     # iterate *.log files in directory
+    self.mOutputCount = 0
     for root, dirs, files in os.walk(sourcedirectory):
       for filename in files:
         if filename.endswith('.log'):
@@ -59,6 +65,7 @@ class SilkLogSplitter(object):
     return True
 
   def _Split(self, filename):
+    print filename
     file = open(filename, 'r')
     for pattern in splitpatterns:
       self._SplitByPattern(pattern, file)
@@ -67,7 +74,6 @@ class SilkLogSplitter(object):
     name = pattern[0]
     begin = pattern[1]
     end = pattern[2]
-    i = 0
     file.seek(0)
 
     # Find begin and end line
@@ -75,11 +81,11 @@ class SilkLogSplitter(object):
     for line in file:
       matched = re.match(begin, line)
       if matched:
-        logfilename = os.path.join(self.mDirectory, name + "_" + str(i) + ".log")
+        logfilename = os.path.join(self.mDirectory, name + "_" + str(self.mOutputCount) + ".log")
         output = open(logfilename, "w")
         output.write("# matched pattern begin:" + begin + "\n");
         output.write("# matched pattern end:" + end + "\n");
-        i += 1
+        self.mOutputCount =  self.mOutputCount + 1
 
         for line in file:
           matched = re.match(end, line)

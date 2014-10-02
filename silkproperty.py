@@ -1,4 +1,6 @@
 import os
+import sys
+import threading
 
 SilkAllProps = [
   ('silk.hw2vsync',       0),
@@ -32,11 +34,10 @@ class SilkProperty(object):
   def GetProps(self):
     os.system('adb shell getprop | grep silk')
 
-
 if __name__ == '__main__':
   sp = SilkProperty()
   print('Set properities...');
-  sp.SetProps(SilkProps)
+  sp.SetProps(SilkAllProps)
   print('Set properities done');
   print('results:')
   sp.GetProps()

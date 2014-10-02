@@ -233,11 +233,9 @@ class SilkProfiler(object):
     """
     Print all samples on stdout
     """
-    i = 1
-    for entry in self.mParser.mTable:
-      print str(i) + ".\t" + self.mParser.mXLabel + " = " + entry[0] + " / " + \
-      self.mParser.mYLabel + " = " + entry[1]
-      i += 1
+    for index, value in enumerate(self.mParser.mTable) :
+      print str(index) + ".\t" + self.mParser.mXLabel + " = " + value[0] + " / " + \
+      self.mParser.mYLabel + " = " + value[1]
 
     return True
 

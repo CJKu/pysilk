@@ -15,49 +15,50 @@ class SilkLogSplitter(object):
     self.mDirectory = ""
     self.mOutputCount = 0
 
-  def Open(self, sourcedirectory, destdirectory):
+  def Open(self, logdirectory, outputdirectory):
     """
     >>> slp.Open("", "")
     Traceback (most recent call last):
       ...
-    OSError: sourcedirectory must be an existed directory.
+    OSError: logdirectory must be an existed directory.
 
     >>> slp.Open("", "./output")
     Traceback (most recent call last):
       ...
-    OSError: sourcedirectory must be an existed directory.
+    OSError: logdirectory must be an existed directory.
 
     >>> slp.Open("./silklogsplitter.py", "./output")
     Traceback (most recent call last):
       ...
-    OSError: sourcedirectory must be an existed directory.
+    OSError: logdirectory must be an existed directory.
 
     >>> slp.Open("./sample", "./silklogsplitter.py")
     Traceback (most recent call last):
       ...
-    OSError: destdirectory can not be an existed file.
+    OSError: outputdirectory can not be an existed file.
 
     >>> slp.Open("./sample", "./output")
+    ...
     True
     """
-    # Validate sourcedirectory
-    if False == os.path.exists(sourcedirectory) or False == os.path.isdir(sourcedirectory):
-      raise OSError("sourcedirectory must be an existed directory.")
+    # Validate logdirectory
+    if False == os.path.exists(logdirectory) or False == os.path.isdir(logdirectory):
+      raise OSError("logdirectory must be an existed directory.")
 
-    # Validate destdirectory and create the destination directory, if need,
+    # Validate outputdirectory and create the destination directory, if need,
     # to store splitted log files
-    if os.path.exists(destdirectory):
-      if os.path.isfile(destdirectory):
-        raise OSError("destdirectory can not be an existed file.")
+    if os.path.exists(outputdirectory):
+      if os.path.isfile(outputdirectory):
+        raise OSError("outputdirectory can not be an existed file.")
       else:
-        shutil.rmtree(destdirectory, ignore_errors=True)
+        shutil.rmtree(outputdirectory, ignore_errors=True)
 
-    os.mkdir(destdirectory);
-    self.mDirectory = destdirectory
+    os.mkdir(outputdirectory);
+    self.mDirectory = outputdirectory
 
     # iterate *.log files in directory
     self.mOutputCount = 0
-    for root, dirs, files in os.walk(sourcedirectory):
+    for root, dirs, files in os.walk(logdirectory):
       for filename in files:
         if filename.endswith('.log'):
           self._Split(os.path.join(root, filename))
@@ -65,7 +66,6 @@ class SilkLogSplitter(object):
     return True
 
   def _Split(self, filename):
-    print filename
     file = open(filename, 'r')
     for pattern in splitpatterns:
       self._SplitByPattern(pattern, file)

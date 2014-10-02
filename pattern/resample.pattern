@@ -1,10 +1,15 @@
+[diagram]
 # x-axis label
 xlabel=frame number
 # y-axis lable
 ylabel=touch event distance
+
+[pattern]
 # group name y = y-axis of trend diagram
 # group name x = x-axis of trend diagram
 # Content type in x-group can be anything.
 # Content type in y-groud must be floart or integer.
 pattern=.*Silk input resample *, *(?P<x>[0-9]+) *, *(?P<y>[.0-9]+).*
+start=.*silk start.*
+end=.*silk end.*
 

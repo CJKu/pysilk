@@ -5,6 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import decimal
 import pylab
+#from ConfigParser import ConfigParser
+import ConfigParser
 
 class Histogram(object):
   """
@@ -25,13 +27,12 @@ class SilkParser(object):
     self.mYLabel = ""       # y-axis label
     self.mTable = []        # Store sample data
 
-  def Parse(self, logFile, patternFile):
+  def Parse(self, logFile, pattern):
     """
       Parse patterFile to fetch pattern strings to match logFile.
       Depend on pattern strings aquired from patternFile, fetch matched line log
       from logFile.
     """
-
     # Clear context before parsing.
     self.mPattern = None    # match pattern
     self.mXLabel = ""       # x-axis label
@@ -39,45 +40,39 @@ class SilkParser(object):
     self.mTable = []        # Store sample data
 
     # Parsing
-    if False == self._ParsePattern(patternFile):
+    if False == self._ParsePattern(pattern):
       return False
     if False == self._ParseLog(logFile):
       return False
 
     return True
 
-  def _ParsePattern(self, patternFile):
+  def _ParsePattern(self, pattern):
     """
     1. Read pattern string
     2. Read x-axis label string
     2. Read y-axis label string
     """
+    cp = ConfigParser.ConfigParser()
+    cp.read(pattern)
+
     # [Mandatory] Read pattern string and create pattern object accordingly
-    for line in patternFile:
-      # Search pattern string in pattern file
-      m = re.search('^pattern[ ]*=[ ]*(.+)', line)
-      if m != None:
-        patternLine = m.group(1)
-        self.mPattern = re.compile(patternLine)
-        break
+    try:
+      patternOption = cp.get('pattern', 'pattern')
+      self.mPattern = re.compile(patternOption)
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+      return False
 
-    # [Option] Read x-label string
-    patternFile.seek(0)
-    for line in patternFile:
-      # Search x-label string in pattern file
-      m = re.search('^xlabel[ ]*=[ ]*(.+)', line)
-      if m != None:
-        self.mXLabel = m.group(1)
-        break
+    # [Option] Read xlabel and ylabel
+    try:
+      self.mXLabel = cp.get('diagram', 'xlabel')
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+      pass
 
-    # [Option] Read y-label string
-    patternFile.seek(0)
-    for line in patternFile:
-      # Search y-label string in pattern file
-      m = re.search('^ylabel[ ]*=[ ]*(.+)', line)
-      if m != None:
-        self.mYLabel = m.group(1)
-        break
+    try:
+      self.mYLabel = cp.get('diagram', 'ylabel')
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+      pass
 
     return (self.mPattern != None)
 
@@ -229,14 +224,11 @@ class SilkProfiler(object):
     logFile = None
 
     logFile = open(source, 'r')
-    patternFile = open(pattern, 'r')
 
     # File resource are ready. Start to parse source files
-    ret = self.mParser.Parse(logFile, patternFile)
+    ret = self.mParser.Parse(logFile, pattern)
 
     # Clean up resource in the end
-    patternFile.close()
-    patternFile = None
     logFile.close()
     lofFile = None
 

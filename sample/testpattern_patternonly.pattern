@@ -1,2 +1,3 @@
+[pattern]
 # A pattern file with pattern string only is valid.
 pattern=.*Silk input resample *, *(?P<x>[0-9]+) *, *(?P<y>[.0-9]+).*

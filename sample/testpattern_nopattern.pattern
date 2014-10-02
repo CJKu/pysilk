@@ -1,4 +1,6 @@
-# No pattern string
+[pattern]
+
+[diagram]
 # x-axis label
 xlabel=frame number
 # y-axis lable

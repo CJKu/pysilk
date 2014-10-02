@@ -212,12 +212,12 @@ class SilkProfiler(object):
       ...
     IOError: [Errno 2] No such file or directory: ''
 
-    >>> pf.Open("", "sample/testlog.txt")
+    >>> pf.Open("", "sample/testlog.log")
     Traceback (most recent call last):
       ...
     IOError: [Errno 2] No such file or directory: ''
 
-    >>> pf.Open("sample/testpattern_pass.pattern", "sample/testlog.txt")
+    >>> pf.Open("sample/testpattern_pass.pattern", "sample/testlog.log")
     True
     """
     if not isinstance(pattern, str):

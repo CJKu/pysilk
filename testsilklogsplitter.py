@@ -16,8 +16,12 @@ class TestSilkLogSplitter(unittest.TestCase):
 
   def testOpen(self):
     splitter = SLP.SilkLogSplitter()
+
+    # Open and parse valide log files
     splitter.Open("./sample", "./output")
 
+    # Again, open with invalid folders.
+    # Assert that splitter context is clear.
     try:
       splitter.Open("", "")
     except:

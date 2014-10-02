@@ -27,7 +27,7 @@ class SilkParser(object):
     self.mYLabel = ""       # y-axis label
     self.mTable = []        # Store sample data
 
-  def Parse(self, logFile, pattern):
+  def Parse(self, log, pattern):
     """
       Parse patterFile to fetch pattern strings to match logFile.
       Depend on pattern strings aquired from patternFile, fetch matched line log
@@ -42,7 +42,7 @@ class SilkParser(object):
     # Parsing
     if False == self._ParsePattern(pattern):
       return False
-    if False == self._ParseLog(logFile):
+    if False == self._ParseLog(log):
       return False
 
     return True
@@ -76,23 +76,24 @@ class SilkParser(object):
 
     return (self.mPattern != None)
 
-  def _ParseLog(self, logFile):
+  def _ParseLog(self, log):
     self.mMatches = 0
     self.mMismatches = 0
 
-    for line in logFile:
-      matched = re.match(self.mPattern, line)
-      if matched:
-        try:
-          self.mMatches += 1
-          x = matched.group('x')
-          y = matched.group('y')
-          entry = (x, y)
-          self.mTable.append(entry)
-        except IndexError as e:
-          print "Parse Error : " + line
-      else:
-        self.mMismatches += 1
+    with open(log, 'r') as logFile:
+      for line in logFile:
+        matched = re.match(self.mPattern, line)
+        if matched:
+          try:
+            self.mMatches += 1
+            x = matched.group('x')
+            y = matched.group('y')
+            entry = (x, y)
+            self.mTable.append(entry)
+          except IndexError as e:
+            print "Parse Error : " + line
+        else:
+          self.mMismatches += 1
 
     return True
 
@@ -183,7 +184,7 @@ class SilkProfiler(object):
     self.mParser = SilkParser()
     self.mDrawer = SilkDrawer()
 
-  def Open(self, pattern, source):
+  def Open(self, pattern, log):
     """
     Open a log file and parse this log file depend on patterns defined in pattern
     file.
@@ -200,41 +201,35 @@ class SilkProfiler(object):
     >>> pf.Open("", "")
     Traceback (most recent call last):
       ...
-    IOError: [Errno 2] No such file or directory: ''
+    IOError: Pattern file does not exist
 
     >>> pf.Open("sample/testpattern_pass.pattern", "")
     Traceback (most recent call last):
       ...
-    IOError: [Errno 2] No such file or directory: ''
+    IOError: Log file does not exist
 
     >>> pf.Open("", "sample/testlog.log")
     Traceback (most recent call last):
       ...
-    IOError: [Errno 2] No such file or directory: ''
+    IOError: Pattern file does not exist
 
     >>> pf.Open("sample/testpattern_pass.pattern", "sample/testlog.log")
     True
     """
+    # Validate parameters
     if not isinstance(pattern, str):
        raise TypeError("pattern Must be a string!")
-    if not isinstance(source, str):
+    if not isinstance(log, str):
        raise TypeError("source Must be a string!")
-
-    patternFile = None
-    logFile = None
-
-    logFile = open(source, 'r')
+    if False == os.path.exists(pattern):
+      raise IOError("Pattern file does not exist")
+    if False == os.path.exists(log):
+      raise IOError("Log file does not exist")
 
     # File resource are ready. Start to parse source files
-    ret = self.mParser.Parse(logFile, pattern)
+    return self.mParser.Parse(log, pattern)
 
-    # Clean up resource in the end
-    logFile.close()
-    lofFile = None
-
-    return ret
-
-  def DumpSamples(self):
+  def DumpSamples(self, to = None):
     """
     Print all samples on stdout
     """

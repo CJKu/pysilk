@@ -25,6 +25,7 @@ class SilkParser(object):
     self.mPattern = None    # match pattern
     self.mXLabel = ""       # x-axis label
     self.mYLabel = ""       # y-axis label
+    self.mTitle = ""        # diagram title
     self.mTable = []        # Store sample data
 
   def Parse(self, log, pattern):
@@ -37,6 +38,7 @@ class SilkParser(object):
     self.mPattern = None    # match pattern
     self.mXLabel = ""       # x-axis label
     self.mYLabel = ""       # y-axis label
+    self.mTitle = ""        # diagram title
     self.mTable = []        # Store sample data
 
     # Parsing
@@ -74,6 +76,11 @@ class SilkParser(object):
     except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
       pass
 
+    try:
+      self.mTitle = cp.get('diagram', 'title')
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+      pass
+
     return (self.mPattern != None)
 
   def _ParseLog(self, log):
@@ -101,25 +108,26 @@ class SilkDrawer(object):
   """
   Histogram drawer
   """
-  def Line(self, yPlots, xLabel, yLabel):
+  def Line(self, yPlots, diagram):
     """
       Draw line histogram.
     """
-    self._EvaluateHistogramSize(len(yPlots))
+    self._DetermineFigureSize(len(yPlots))
     plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
         markersize=6)
 
     plt.grid(True)
-    plt.xlabel(xLabel)
-    plt.ylabel(yLabel)
+    plt.title(diagram[0])
+    plt.xlabel(diagram[1])
+    plt.ylabel(diagram[2])
     plt.show()
 
-  def Bar(self, yPlots, xLabel, yLabel):
+  def Bar(self, yPlots, diagram):
     """
       Draw bar histogram
     """
-    self._EvaluateHistogramSize(10)
+    self._DetermineFigureSize(10)
     minPlot = np.min(yPlots)
     maxPlot = np.max(yPlots)
 
@@ -151,11 +159,15 @@ class SilkDrawer(object):
     barPositions = np.linspace(0., 10., 10).tolist()
     plt.bar(barPositions, accounts)
 
-    plt.xlabel(yLabel)
+    plt.title(diagram[0])
+    plt.xlabel(diagram[1])
     plt.ylabel("amount")
     plt.show()
 
-  def _EvaluateHistogramSize(self, samples):
+  def _DetermineFigureSize(self, samples):
+    '''
+    A figure in matplotlib means the whole window in the user interface.
+    '''
     F = pylab.gcf()
     DPI = F.get_dpi()
     DefaultSize = F.get_size_inches()
@@ -267,12 +279,16 @@ class SilkProfiler(object):
       yPlots.append(float(entry[1]))
 
     if histogram == Histogram.Line:
-      self.mDrawer.Line(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
+      self.mDrawer.Line(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
+        self.mParser.mYLabel))
     elif histogram == Histogram.Bar:
-      self.mDrawer.Bar(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
+      self.mDrawer.Bar(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
+        self.mParser.mYLabel))
     elif histogram == Histogram.All:
-      self.mDrawer.Line(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
-      self.mDrawer.Bar(yPlots, self.mParser.mXLabel, self.mParser.mYLabel)
+      self.mDrawer.Line(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
+        self.mParser.mYLabel))
+      self.mDrawer.Bar(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
+        self.mParser.mYLabel))
 
     return True
 

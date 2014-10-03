@@ -2,8 +2,8 @@
 # x-axis label
 xlabel=frame number
 # y-axis lable
-ylabel=touch event distance
-
+ylabel=movement distance
+title=Touch Event Resample
 [pattern]
 # group name y = y-axis of trend diagram
 # group name x = x-axis of trend diagram

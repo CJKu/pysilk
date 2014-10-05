@@ -7,6 +7,12 @@ import decimal
 import pylab
 #from ConfigParser import ConfigParser
 import ConfigParser
+from matplotlib.ticker import AutoMinorLocator
+from matplotlib.ticker import LinearLocator
+from matplotlib.ticker import AutoLocator
+from matplotlib.ticker import IndexLocator
+from matplotlib.ticker import MultipleLocator
+import matplotlib.scale
 
 class Histogram(object):
   """
@@ -113,6 +119,13 @@ class SilkDrawer(object):
       Draw line histogram.
     """
     self._DetermineFigureSize(len(yPlots))
+    #plt.gca().yaxis.set_major_locator(AutoMinorLocator())
+    #plt.gca().yaxis.set_major_locator(LinearLocator())
+    #plt.gca().yaxis.set_major_locator(AutoLocator())
+    #plt.gca().yaxis.set_major_locator(IndexLocator())
+    #plt.gca().yaxis.set_major_locator(MultipleLocator(10))
+    #plt.gca().set_yscale('log', basey=np.e)
+    plt.gca().set_yscale('log', basey=2)
     plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
         markersize=6)
@@ -268,6 +281,8 @@ class SilkProfiler(object):
 
     if doPrint:
       print "Total samples      = " + str(total)
+      print "Max value          = " + str(np.max(dists))
+      print "Min value          = " + str(np.min(dists))
       print "Mean value         = " + str(mean)
       print "Standard deviation = " + str(stdev)
 

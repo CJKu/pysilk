@@ -114,7 +114,7 @@ class SilkDrawer(object):
   """
   Histogram drawer
   """
-  def Line(self, yPlots, diagram):
+  def Line(self, yPlots, decorations, statistic):
     """
       Draw line histogram.
     """
@@ -126,14 +126,20 @@ class SilkDrawer(object):
     #plt.gca().yaxis.set_major_locator(MultipleLocator(10))
     #plt.gca().set_yscale('log', basey=np.e)
     plt.gca().set_yscale('log', basey=2)
+
+    # Draw mean line
+    plt.axhline(y = statistic[1], linewidth= 2, color='r')
+
+    # Draw plots
     plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
-        markersize=6)
+        markersize=4)
+
 
     plt.grid(True)
-    plt.title(diagram[0])
-    plt.xlabel(diagram[1])
-    plt.ylabel(diagram[2])
+    plt.title(decorations[0])
+    plt.xlabel(decorations[1])
+    plt.ylabel(decorations[2])
     plt.show()
 
   def Bar(self, yPlots, diagram):
@@ -293,17 +299,16 @@ class SilkProfiler(object):
     for entry in self.mParser.mTable:
       yPlots.append(float(entry[1]))
 
+    decorations = (self.mParser.mTitle, self.mParser.mXLabel, self.mParser.mYLabel)
+    statistic = self.Statistic(False)
+
     if histogram == Histogram.Line:
-      self.mDrawer.Line(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
-        self.mParser.mYLabel))
+      self.mDrawer.Line(yPlots, decorations, statistic)
     elif histogram == Histogram.Bar:
-      self.mDrawer.Bar(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
-        self.mParser.mYLabel))
+      self.mDrawer.Bar(yPlots, decorations, statistic)
     elif histogram == Histogram.All:
-      self.mDrawer.Line(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
-        self.mParser.mYLabel))
-      self.mDrawer.Bar(yPlots, (self.mParser.mTitle, self.mParser.mXLabel,
-        self.mParser.mYLabel))
+      self.mDrawer.Line(yPlots, decorations, statistic)
+      self.mDrawer.Bar(yPlots, decorations, statistic)
 
     return True
 

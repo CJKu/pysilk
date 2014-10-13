@@ -36,20 +36,31 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf("" != profiler.mParser.mYLabel)
 
   def testLogParsing(self):
-    profiler = SP.SilkProfiler()
-
     # Only one silk ling log in testlog_one.log
+    profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.log"))
     statistic = profiler.Statistic(False)
     self.failIf(1 != statistic[0])
 
     # Open and parse testlog.log
+    profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog.log"))
     total, mean, stdev, maxv, minv = profiler.Statistic(False)
     self.failIf(10 != total)
     self.failIf(5.5 != mean)
     self.failIf(10 != maxv)
     self.failIf(1 != minv)
+
+    # Open and parse testlog_zero.log, which is an empty file
+    profiler = SP.SilkProfiler()
+    self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_zero.log"))
+    total, mean, stdev, maxv, minv = profiler.Statistic(False)
+    self.failIf(0 != total)
+    self.failIf(0 != mean)
+    self.failIf(0 != stdev)
+    self.failIf(0 != maxv)
+    self.failIf(0 != minv)
+
 
     # Repeat parsing logs. Make sure context is independent between two parsing
     # Keep loading testlog_one two times, total samples should not be accumulated.

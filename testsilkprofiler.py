@@ -36,13 +36,13 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf("" != profiler.mParser.mYLabel)
 
   def testLogParsing(self):
-    # Only one silk ling log in testlog_one.log
+    # Parse a log file which has only one valid line log
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.log"))
     statistic = profiler.Statistic(False)
     self.failIf(1 != statistic[0])
 
-    # Open and parse testlog.log
+    # Parse a log file which has 10 valid line log
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog.log"))
     total, mean, stdev, maxv, minv = profiler.Statistic(False)
@@ -51,7 +51,7 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(10 != maxv)
     self.failIf(1 != minv)
 
-    # Open and parse testlog_zero.log, which is an empty file
+    # Parse a log file which has no valid log
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_zero.log"))
     total, mean, stdev, maxv, minv = profiler.Statistic(False)
@@ -61,7 +61,6 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(0 != maxv)
     self.failIf(0 != minv)
 
-
     # Repeat parsing logs. Make sure context is independent between two parsing
     # Keep loading testlog_one two times, total samples should not be accumulated.
     profiler = SP.SilkProfiler()
@@ -69,6 +68,13 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.log"))
     statistic = profiler.Statistic(False)
     self.failIf(1 != statistic[0])
+
+  def testDrawing(self):
+    # Open a log file which has no valid log again.
+    # Expect return False while calling SilkProfiler.Draw()
+    profiler = SP.SilkProfiler()
+    self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_zero.log"))
+    self.failIf(True == profiler.Draw())
 
 # Run the unittests
 if __name__ == '__main__':

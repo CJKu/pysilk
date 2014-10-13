@@ -45,9 +45,11 @@ class TestSilkProfilerFunction(unittest.TestCase):
 
     # Open and parse testlog.log
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog.log"))
-    total, mean, stdev = profiler.Statistic(False)
+    total, mean, stdev, maxv, minv = profiler.Statistic(False)
     self.failIf(10 != total)
     self.failIf(5.5 != mean)
+    self.failIf(10 != maxv)
+    self.failIf(1 != minv)
 
     # Repeat parsing logs. Make sure context is independent between two parsing
     # Keep loading testlog_one two times, total samples should not be accumulated.

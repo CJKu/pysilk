@@ -5,14 +5,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import decimal
 import pylab
-#from ConfigParser import ConfigParser
 import ConfigParser
-from matplotlib.ticker import AutoMinorLocator
-from matplotlib.ticker import LinearLocator
-from matplotlib.ticker import AutoLocator
-from matplotlib.ticker import IndexLocator
-from matplotlib.ticker import MultipleLocator
-import matplotlib.scale
+from numpy import ma
+from matplotlib import scale as mscale
+from matplotlib import transforms as mtransforms
+from matplotlib.ticker import Formatter, FixedLocator
+import matplotlib.patches as patches
 
 class Histogram(object):
   """
@@ -109,6 +107,76 @@ class SilkParser(object):
           self.mMismatches += 1
 
     return True
+'''
+class MeanScale(mscale.ScaleBase):
+  name = 'meanscale'
+
+  def __init__(self, axis, **kwargs):
+    mscale.ScaleBase.__init__(self)
+
+    self.mean = kwargs.pop("mean")
+    self.maxv = kwargs.pop("maxv")
+    self.minv = kwargs.pop("minv")
+
+  def get_transform(self):
+    #return mtransforms.IdentityTransform(self)
+    #return self.LantitudeTransform((self.mean, self.maxv, self.minv))
+    affine = mtransforms.Affine2D()
+    affinenslate(0, 1)
+    return affine
+  
+  def set_default_locators_and_formatters(self, axis):
+    lowserStride = (self.mean - self.minv) / 5
+    upperStride = (self.maxv - self.mean) / 5
+
+    # Define ycks
+    axis.set_major_locator(
+      FixedLocator(
+        np.arange(self.minv, self.mean, lowserStride).tolist() +
+        np.arange(self.mean, self.maxv + upperStride, upperStride).tolist()
+      )
+    )
+    # I don't really care about formatter, at last, for now
+
+  #def limit_range_for_scale(self, vmin, vmax, minpos):
+  #    return self.minv, self.maxv
+
+  class LantitudeTransform(mtransforms.Affine2D):
+    input_dims = 1
+    output_dims = 1
+    is_separable = True
+
+    def __init__(self, statistic):
+      mtransforms.Transform.__init__(self)
+      self.statistic = statistic
+
+    def transform_affine(self, a):
+        print a
+        return a
+    #def transform_non_affine(self, a):
+    #  print a
+    #  return a
+      #return np.log(np.abs(np.tan(a) + 1.0 / np.cos(a)))
+
+    def inverted(self):
+      return MeanScale.InvertedLatitudeTransform(self.statistic)
+
+  class InvertedLantitudeTransform(mtransforms.Affine2D):
+    input_dims = 1
+    output_dims = 1
+    is_separable = True
+
+    def __init__(self, statistic):
+      mtransforms.Transform.__init__(self)
+      self.statistic = statistic
+
+    def transform_affine(self, a):
+      #return np.arctan(np.sinh(a))
+      return a
+
+    def inverted(self):
+      return MeanScale.LatitudeTransform(self.statistic)
+'''
 
 class SilkDrawer(object):
   """
@@ -118,25 +186,47 @@ class SilkDrawer(object):
     """
       Draw line histogram.
     """
+    # Determin figure size according the the number of plots
     self._DetermineFigureSize(len(yPlots))
-    #plt.gca().yaxis.set_major_locator(AutoMinorLocator())
-    #plt.gca().yaxis.set_major_locator(LinearLocator())
-    #plt.gca().yaxis.set_major_locator(AutoLocator())
-    #plt.gca().yaxis.set_major_locator(IndexLocator())
-    #plt.gca().yaxis.set_major_locator(MultipleLocator(10))
-    #plt.gca().set_yscale('log', basey=np.e)
-    plt.gca().set_yscale('log', basey=2)
 
-    # Draw mean line
-    plt.axhline(y = statistic[1], linewidth= 2, color='r')
+    ax = plt.subplot(111)
 
+    # Draw mean and stddev decoration
+    total, mean, stdev, maxv, minv = statistic
+    upperBound = min(mean + stdev, maxv)
+    lowerBound = max(mean - stdev, minv)
+    ax.axhline(y = mean, linewidth= 2, color='red', ls = '--')
+    ax.axhline(y = upperBound, linewidth= 2, color='green', ls = '--')
+    ax.axhline(y = lowerBound, linewidth= 2, color='green', ls = '--')
+
+    hotZoneTrans = mtransforms.blended_transform_factory(ax.transAxes, ax.transData)
+    hotZone = patches.Rectangle((0, lowerBound), width = 1,
+            height = upperBound - lowerBound,
+            transform = hotZoneTrans, alpha = 0.5, color = 'yellow')
+    ax.add_patch(hotZone)
+    ax.set_ylim(lowerBound, upperBound)
+
+    # Set yaxis locator
+    '''
+    plt.gca().set_yscale('meanscale', mean=mean, maxv=maxv, minv=minv)
+    lowserStride = (mean - minv) / 5
+    upperStride = (maxv - mean) / 5
+    ax.yaxis.set_major_locator(
+      FixedLocator(
+        np.arange(minv, mean, lowserStride).tolist() +
+        np.arange(mean, maxv + upperStride, upperStride).tolist()
+      )
+    )
+    '''
+    #ax.yaxis.set_transform(affine)
     # Draw plots
-    plt.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
+    affine = mtransforms.Affine2D().translate(0, 0) + ax.transData
+    ax.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
-        markersize=4)
+        markersize=4, transform = affine)
 
-
-    plt.grid(True)
+    # Draw decorations.
+    ax.grid(True)
     plt.title(decorations[0])
     plt.xlabel(decorations[1])
     plt.ylabel(decorations[2])
@@ -281,18 +371,26 @@ class SilkProfiler(object):
     for entry in self.mParser.mTable:
       dists.append(float(entry[1]))
 
+    mean = 0.0
+    stdev = 0.0
+    maxv = 0.0
+    minv = 0.0
+
     total = len(self.mParser.mTable)
-    mean = np.mean(dists)
-    stdev = np.std(dists)
+    if 0 != total:
+      mean = np.mean(dists)
+      stdev = np.std(dists)
+      maxv = np.max(dists)
+      minv = np.min(dists)
 
     if doPrint:
       print "Total samples      = " + str(total)
-      print "Max value          = " + str(np.max(dists))
-      print "Min value          = " + str(np.min(dists))
+      print "Max value          = " + str(maxv)
+      print "Min value          = " + str(minv)
       print "Mean value         = " + str(mean)
       print "Standard deviation = " + str(stdev)
 
-    return (total, mean, stdev)
+    return (total, mean, stdev, maxv, minv)
 
   def Draw(self, histogram = Histogram.Line):
     yPlots = []
@@ -301,6 +399,10 @@ class SilkProfiler(object):
 
     decorations = (self.mParser.mTitle, self.mParser.mXLabel, self.mParser.mYLabel)
     statistic = self.Statistic(False)
+
+    if 0 == len(yPlots):
+      print "There is no valid sample in log file."
+      return False;
 
     if histogram == Histogram.Line:
       self.mDrawer.Line(yPlots, decorations, statistic)
@@ -321,6 +423,7 @@ class SilkProfiler(object):
 
     return True
 
+#mscale.register_scale(MeanScale)
 profiler = SilkProfiler()
 
 if __name__ == "__main__":

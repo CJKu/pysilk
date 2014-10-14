@@ -186,14 +186,17 @@ class SilkDrawer(object):
     """
       Draw line histogram.
     """
-    # Determin figure size according the the number of plots
-    # self._DetermineFigureSize(len(yPlots))
-
-    ax1 = plt.subplot2grid((4, 1), (0, 0), rowspan = 3)
+    # Draw sample trend diagram and smoothness diagram
+    ax1 = plt.subplot2grid((4, 4), (0, 0), rowspan = 3, colspan = 4)
     self._DrawSampleAxes(yPlots, ax1, decorations, statistics)
 
-    ax2 = plt.subplot2grid((4, 1), (3, 0))
-    self._DrawHotZoneAxes(yPlots, ax2, decorations, statistics)
+    ax2 = plt.subplot2grid((4, 4), (3, 0), colspan = 3)
+    self._DrawSmoothnessAxes(yPlots, ax2, decorations, statistics)
+
+    # Draw statistic table
+    ax3 = plt.subplot2grid((4, 4), (3, 3))
+    ax3.set_axis_off()
+    self._DrawStatisticTable(ax3, statistics)
 
     # Display figures
     plt.show()
@@ -239,7 +242,25 @@ class SilkDrawer(object):
     plt.ylabel("amount")
     plt.show()
 
-  def _DrawHotZoneAxes(self, yPlots, ax, decorations, statistics):
+  def _DrawStatisticTable(self, ax, statistics):
+    row_labels=['total','mean','stdev', 'max', 'min', 'cv']
+    table_vals=[[statistics["total"]],
+                [statistics["mean"]],
+                [statistics["stdev"]],
+                [statistics["max"]],
+                [statistics["min"]],
+                [statistics["cv"]]
+               ]
+    the_table = plt.table(cellText=table_vals,
+                          colWidths = [1],
+                          rowLabels = row_labels,
+                          cellLoc = 'center',
+                          loc='center right')
+    the_table.set_fontsize(40)
+    the_table.scale(1, 1)
+    ax.add_table(the_table)
+
+  def _DrawSmoothnessAxes(self, yPlots, ax, decorations, statistics):
     upperBound = 0
     lowerBound = 0
     y = []

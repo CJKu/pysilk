@@ -12,7 +12,7 @@ class SilkLogSplitter(object):
   3. Generat diagrams for each segment
   """
   def __init__(self):
-    self.mDirectory = ""
+    self.mOutput = ""
     self.mOutputCount = 0
 
   def Open(self, logdirectory, outputdirectory):
@@ -41,6 +41,8 @@ class SilkLogSplitter(object):
     ...
     True
     """
+    self._Clear()
+
     # Validate logdirectory
     if False == os.path.exists(logdirectory) or False == os.path.isdir(logdirectory):
       raise OSError("logdirectory must be an existed directory.")
@@ -54,7 +56,7 @@ class SilkLogSplitter(object):
         shutil.rmtree(outputdirectory, ignore_errors=True)
 
     os.mkdir(outputdirectory);
-    self.mDirectory = outputdirectory
+    self.mOutput = outputdirectory
 
     # iterate *.log files in directory
     self.mOutputCount = 0
@@ -64,6 +66,10 @@ class SilkLogSplitter(object):
           self._Split(os.path.join(root, filename))
 
     return True
+
+  def _Clear(self):
+    self.mOutput = ""
+    self.mOutputCount = 0
 
   def _Split(self, filename):
     file = open(filename, 'r')
@@ -81,7 +87,7 @@ class SilkLogSplitter(object):
     for line in file:
       matched = re.match(begin, line)
       if matched:
-        logfilename = os.path.join(self.mDirectory, name + "_" + str(self.mOutputCount) + ".log")
+        logfilename = os.path.join(self.mOutput, name + "_" + str(self.mOutputCount) + ".log")
         output = open(logfilename, "w")
         output.write("# matched pattern begin:" + begin + "\n");
         output.write("# matched pattern end:" + end + "\n");

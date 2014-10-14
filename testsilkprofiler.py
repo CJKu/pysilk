@@ -1,5 +1,6 @@
 import silkprofiler as SP
 import unittest
+import numpy as np
 
 class TestSilkProfilerFunction(unittest.TestCase):
   def setUp(self):
@@ -40,6 +41,7 @@ class TestSilkProfilerFunction(unittest.TestCase):
     profiler = SP.SilkProfiler()
     statistics = profiler.Statistic(False)
     self.failIf(0 != statistics["total"])
+    self.failIf(True != np.isnan(statistics["cv"]))
 
     # Parse a log file which has only one valid line log
     profiler = SP.SilkProfiler()

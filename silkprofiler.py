@@ -189,9 +189,81 @@ class SilkDrawer(object):
     # Determin figure size according the the number of plots
     # self._DetermineFigureSize(len(yPlots))
 
-    fig = plt.figure(1)
-    ax = plt.subplot(111)
+    ax1 = plt.subplot2grid((4, 1), (0, 0), rowspan = 3)
+    self._DrawSampleAxes(yPlots, ax1, decorations, statistics)
 
+    ax2 = plt.subplot2grid((4, 1), (3, 0))
+    self._DrawHotZoneAxes(yPlots, ax2, decorations, statistics)
+
+    # Display figures
+    plt.show()
+
+  def Bar(self, yPlots, decorations, statistics):
+    """
+      Draw bar histogram
+    """
+    self._DetermineFigureSize(10)
+    minPlot = np.min(yPlots)
+    maxPlot = np.max(yPlots)
+
+    # All yPlots have the same value. Perfect condition
+    if minPlot == maxPlot:
+      plt.bar([2], [len(yPlots)])
+      return
+
+    # Divide yPlots into 10 groups
+    # it's.... so uglyyyyyy... find a better way.
+    ranges = np.linspace(minPlot, maxPlot, 10).tolist()
+
+    accounts = [0] * 10
+    for plot in yPlots:
+      for i,n in enumerate(ranges):
+        if plot <= n:
+          accounts[i] += 1
+          break
+
+    # Round xticks to shrink the space between ticks
+    xTickLabels = ranges;
+    for i,n in enumerate(xTickLabels) :
+      xTickLabels[i] = round(xTickLabels[i], 3)
+
+    xTickPositions = np.linspace(0.5, 10.5, 10).tolist()
+    plt.xticks(xTickPositions, xTickLabels)
+
+    # Draw bar chart.
+    barPositions = np.linspace(0., 10., 10).tolist()
+    plt.bar(barPositions, accounts)
+
+    plt.title(decorations[0])
+    plt.xlabel(decorations[1])
+    plt.ylabel("amount")
+    plt.show()
+
+  def _DrawHotZoneAxes(self, yPlots, ax, decorations, statistics):
+    upperBound = 0
+    lowerBound = 0
+    y = []
+    for index, value in enumerate(yPlots) :
+      diff = 0
+      if 0 < index:
+        diff = value - yPlots[index - 1]
+      if diff > upperBound:
+        upperBound = diff
+      elif diff < lowerBound:
+        lowerBound = diff
+
+      y.append(diff)
+
+    x = np.arange(0, len(y), 1)
+    ax.set_ylim(lowerBound, upperBound)
+    ax.bar(x, y, label = 'y diff', color = 'red', edgecolor = 'red')
+
+    # Draw decorations.
+    ax.legend(loc='best', framealpha=0.5)
+    ax.set_xlabel(decorations[1])
+    ax.set_ylabel('smoothness')
+
+  def _DrawSampleAxes(self, yPlots, ax, decorations, statistics):
     # Draw mean and stddev decoration
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
@@ -242,50 +314,6 @@ class SilkDrawer(object):
     ax.set_title(decorations[0])
     ax.set_xlabel(decorations[1])
     ax.set_ylabel(decorations[2])
-
-    # Display figures
-    plt.show()
-
-  def Bar(self, yPlots, decorations, statistics):
-    """
-      Draw bar histogram
-    """
-    self._DetermineFigureSize(10)
-    minPlot = np.min(yPlots)
-    maxPlot = np.max(yPlots)
-
-    # All yPlots have the same value. Perfect condition
-    if minPlot == maxPlot:
-      plt.bar([2], [len(yPlots)])
-      return
-
-    # Divide yPlots into 10 groups
-    # it's.... so uglyyyyyy... find a better way.
-    ranges = np.linspace(minPlot, maxPlot, 10).tolist()
-
-    accounts = [0] * 10
-    for plot in yPlots:
-      for i,n in enumerate(ranges):
-        if plot <= n:
-          accounts[i] += 1
-          break
-
-    # Round xticks to shrink the space between ticks
-    xTickLabels = ranges;
-    for i,n in enumerate(xTickLabels) :
-      xTickLabels[i] = round(xTickLabels[i], 3)
-
-    xTickPositions = np.linspace(0.5, 10.5, 10).tolist()
-    plt.xticks(xTickPositions, xTickLabels)
-
-    # Draw bar chart.
-    barPositions = np.linspace(0., 10., 10).tolist()
-    plt.bar(barPositions, accounts)
-
-    plt.title(decorations[0])
-    plt.xlabel(decorations[1])
-    plt.ylabel("amount")
-    plt.show()
 
   def _DetermineFigureSize(self, samples):
     '''

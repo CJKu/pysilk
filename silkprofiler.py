@@ -237,7 +237,7 @@ class SilkDrawer(object):
     ax.fill_between(xPlots, lowerBound, yPlots, where=yPlots<=lowerBound, facecolor = 'blue', interpolate = True, alpha = 0.7)
 
     # Draw decorations.
-    ax.legend(loc='best')
+    ax.legend(loc='best', framealpha=0.5)
     ax.grid(True)
     ax.set_title(decorations[0])
     ax.set_xlabel(decorations[1])

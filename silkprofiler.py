@@ -182,7 +182,7 @@ class SilkDrawer(object):
   """
   Histogram drawer
   """
-  def Line(self, yPlots, decorations, statistic):
+  def Line(self, yPlots, decorations, statistics):
     """
       Draw line histogram.
     """
@@ -192,10 +192,9 @@ class SilkDrawer(object):
     ax = plt.subplot(111)
 
     # Draw mean and stddev decoration
-    total, mean, stdev, maxv, minv = statistic
-    upperBound = min(mean + stdev, maxv)
-    lowerBound = max(mean - stdev, minv)
-    ax.axhline(y = mean, linewidth= 2, color='red', ls = '--')
+    upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
+    lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
+    ax.axhline(y = statistics["mean"], linewidth= 2, color='red', ls = '--')
     ax.axhline(y = upperBound, linewidth= 2, color='green', ls = '--')
     ax.axhline(y = lowerBound, linewidth= 2, color='green', ls = '--')
 
@@ -392,7 +391,7 @@ class SilkProfiler(object):
       print "Min value                = " + str(minv)
       print "Mean value               = " + str(mean)
       print "Standard deviation       = " + str(stdev)
-      print "Coefficient of variation = " + str(cv)
+      print "Coefficient of variation = " + str(cv) + "%"
 
     return {  "total"  : total,
               "mean"   : mean,

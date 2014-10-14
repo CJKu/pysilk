@@ -124,7 +124,7 @@ class MeanScale(mscale.ScaleBase):
     affine = mtransforms.Affine2D()
     affinenslate(0, 1)
     return affine
-  
+
   def set_default_locators_and_formatters(self, axis):
     lowserStride = (self.mean - self.minv) / 5
     upperStride = (self.maxv - self.mean) / 5
@@ -187,26 +187,32 @@ class SilkDrawer(object):
       Draw line histogram.
     """
     # Determin figure size according the the number of plots
-    self._DetermineFigureSize(len(yPlots))
+    # self._DetermineFigureSize(len(yPlots))
 
+    fig = plt.figure(1)
     ax = plt.subplot(111)
 
     # Draw mean and stddev decoration
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
-    ax.axhline(y = statistics["mean"], linewidth= 2, color='red', ls = '--')
-    ax.axhline(y = upperBound, linewidth= 2, color='green', ls = '--')
-    ax.axhline(y = lowerBound, linewidth= 2, color='green', ls = '--')
-
+    # mean line
+    ax.axhline(y = statistics["mean"], linewidth= 1, color='red', ls = '--')
+    # stdev line
+    ax.axhline(y = upperBound, linewidth= 1, color='green', ls = '--')
+    ax.axhline(y = lowerBound, linewidth= 1, color='green', ls = '--')
+    # hot zone area rectangle
     hotZoneTrans = mtransforms.blended_transform_factory(ax.transAxes, ax.transData)
     hotZone = patches.Rectangle((0, lowerBound), width = 1,
             height = upperBound - lowerBound,
             transform = hotZoneTrans, alpha = 0.5, color = 'yellow')
     ax.add_patch(hotZone)
+    # y-axis upper and lower bound
+    upperBound = min(statistics["mean"] + (3 * statistics["stdev"]), statistics["max"])
+    lowerBound = max(statistics["mean"] - (3 * statistics["stdev"]), statistics["min"])
     ax.set_ylim(lowerBound, upperBound)
 
-    # Set yaxis locator
     '''
+    # Set yaxis locator
     plt.gca().set_yscale('meanscale', mean=mean, maxv=maxv, minv=minv)
     lowserStride = (mean - minv) / 5
     upperStride = (maxv - mean) / 5
@@ -216,9 +222,10 @@ class SilkDrawer(object):
         np.arange(mean, maxv + upperStride, upperStride).tolist()
       )
     )
+    ax.yaxis.set_transform(affine)
     '''
-    #ax.yaxis.set_transform(affine)
-    # Draw plots
+
+    # Draw line
     affine = mtransforms.Affine2D().translate(0, 0) + ax.transData
     ax.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
         markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
@@ -226,9 +233,11 @@ class SilkDrawer(object):
 
     # Draw decorations.
     ax.grid(True)
-    plt.title(decorations[0])
-    plt.xlabel(decorations[1])
-    plt.ylabel(decorations[2])
+    ax.set_title(decorations[0])
+    ax.set_xlabel(decorations[1])
+    ax.set_ylabel(decorations[2])
+
+    # Render on screen
     plt.show()
 
   def Bar(self, yPlots, decorations, statistics):

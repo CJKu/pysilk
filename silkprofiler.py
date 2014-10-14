@@ -231,7 +231,7 @@ class SilkDrawer(object):
     plt.ylabel(decorations[2])
     plt.show()
 
-  def Bar(self, yPlots, diagram):
+  def Bar(self, yPlots, decorations, statistics):
     """
       Draw bar histogram
     """
@@ -267,8 +267,8 @@ class SilkDrawer(object):
     barPositions = np.linspace(0., 10., 10).tolist()
     plt.bar(barPositions, accounts)
 
-    plt.title(diagram[0])
-    plt.xlabel(diagram[1])
+    plt.title(decorations[0])
+    plt.xlabel(decorations[1])
     plt.ylabel("amount")
     plt.show()
 
@@ -406,19 +406,19 @@ class SilkProfiler(object):
       yPlots.append(float(entry[1]))
 
     decorations = (self.mParser.mTitle, self.mParser.mXLabel, self.mParser.mYLabel)
-    statistic = self.Statistic(False)
+    statistics = self.Statistic(False)
 
     if 0 == len(yPlots):
       print "There is no valid sample in log file."
       return False;
 
     if histogram == Histogram.Line:
-      self.mDrawer.Line(yPlots, decorations, statistic)
+      self.mDrawer.Line(yPlots, decorations, statistics)
     elif histogram == Histogram.Bar:
-      self.mDrawer.Bar(yPlots, decorations, statistic)
+      self.mDrawer.Bar(yPlots, decorations, statistics)
     elif histogram == Histogram.All:
-      self.mDrawer.Line(yPlots, decorations, statistic)
-      self.mDrawer.Bar(yPlots, decorations, statistic)
+      self.mDrawer.Line(yPlots, decorations, statistics)
+      self.mDrawer.Bar(yPlots, decorations, statistics)
 
     return True
 

@@ -195,17 +195,17 @@ class SilkDrawer(object):
     # Draw mean and stddev decoration
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
-    # mean line
-    ax.axhline(y = statistics["mean"], label='mean', linewidth= 1, color='red', ls = '--')
-    # stdev line
-    ax.axhline(y = upperBound, label='+stdev', linewidth= 1, color='green', ls = '--')
-    ax.axhline(y = lowerBound, label='-stdev', linewidth= 1, color='green', ls = '--')
     # hot zone area rectangle
     hotZoneTrans = mtransforms.blended_transform_factory(ax.transAxes, ax.transData)
     hotZone = patches.Rectangle((0, lowerBound), width = 1,
             height = upperBound - lowerBound,
-            transform = hotZoneTrans, alpha = 0.5, color = 'yellow')
+            transform = hotZoneTrans, alpha = 0.3, color = 'yellow')
     ax.add_patch(hotZone)
+    # mean line
+    ax.axhline(y = statistics["mean"], label='mean', linewidth= 1, color='red', ls = '--')
+    # stdev line
+    ax.axhline(y = upperBound, label='+- stdev', linewidth= 1, color='black', alpha=0.5, ls = '-')
+    ax.axhline(y = lowerBound, linewidth= 1, color='black', alpha=0.5, ls = '-')
     # y-axis upper and lower bound
     upperBound = min(statistics["mean"] + (3 * statistics["stdev"]), statistics["max"])
     lowerBound = max(statistics["mean"] - (3 * statistics["stdev"]), statistics["min"])
@@ -227,18 +227,23 @@ class SilkDrawer(object):
 
     # Draw line
     affine = mtransforms.Affine2D().translate(0, 0) + ax.transData
-    ax.plot(yPlots, color='blue', linestyle='solid', linewidth=2, marker='o',
-        markerfacecolor='red', markeredgecolor='blue', markeredgewidth=1,
-        markersize=4, transform = affine)
+    ax.plot(yPlots, color = 'blue', linestyle = 'solid', linewidth = 1, transform = affine)
+        # , marker='o', markerfacecolor='red', markeredgecolor='blue',
+        # markeredgewidth=1,markersize=4)
+    xPlots = np.arange(0, len(yPlots), 1)
+    upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
+    lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
+    ax.fill_between(xPlots, upperBound, yPlots, where=yPlots>=upperBound, facecolor = 'blue', interpolate = True, alpha = 0.7)
+    ax.fill_between(xPlots, lowerBound, yPlots, where=yPlots<=lowerBound, facecolor = 'blue', interpolate = True, alpha = 0.7)
 
     # Draw decorations.
-    ax.legend(loc='upper right')
+    ax.legend(loc='best')
     ax.grid(True)
     ax.set_title(decorations[0])
     ax.set_xlabel(decorations[1])
     ax.set_ylabel(decorations[2])
 
-    # Render on screen
+    # Display figures
     plt.show()
 
   def Bar(self, yPlots, decorations, statistics):

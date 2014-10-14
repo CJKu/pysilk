@@ -375,7 +375,7 @@ class SilkProfiler(object):
     stdev = 0.0
     maxv  = 0.0
     minv  = 0.0
-    cv    = 0.0
+    cv    = "NaN"
 
     total = len(self.mParser.mTable)
     if 0 != total:

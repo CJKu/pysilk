@@ -36,38 +36,43 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf("" != profiler.mParser.mYLabel)
 
   def testLogParsing(self):
+    # Get statistic data of a profiler which has not parsed any log file yet
+    profiler = SP.SilkProfiler()
+    statistics = profiler.Statistic(False)
+    self.failIf(0 != statistics["total"])
+
     # Parse a log file which has only one valid line log
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.log"))
-    statistic = profiler.Statistic(False)
-    self.failIf(1 != statistic[0])
+    statistics = profiler.Statistic(False)
+    self.failIf(1 != statistics["total"])
 
     # Parse a log file which has 10 valid line log
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog.log"))
-    total, mean, stdev, maxv, minv = profiler.Statistic(False)
-    self.failIf(10 != total)
-    self.failIf(5.5 != mean)
-    self.failIf(10 != maxv)
-    self.failIf(1 != minv)
+    statistics = profiler.Statistic(False)
+    self.failIf(10 != statistics["total"])
+    self.failIf(5.5 != statistics["mean"])
+    self.failIf(10 != statistics["max"])
+    self.failIf(1 != statistics["min"])
 
     # Parse a log file which has no valid log
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_zero.log"))
-    total, mean, stdev, maxv, minv = profiler.Statistic(False)
-    self.failIf(0 != total)
-    self.failIf(0 != mean)
-    self.failIf(0 != stdev)
-    self.failIf(0 != maxv)
-    self.failIf(0 != minv)
+    statistics = profiler.Statistic(False)
+    self.failIf(0 != statistics["total"])
+    self.failIf(0 != statistics["mean"])
+    self.failIf(0 != statistics["stdev"])
+    self.failIf(0 != statistics["max"])
+    self.failIf(0 != statistics["min"])
 
     # Repeat parsing logs. Make sure context is independent between two parsing
     # Keep loading testlog_one two times, total samples should not be accumulated.
     profiler = SP.SilkProfiler()
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.log"))
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_one.log"))
-    statistic = profiler.Statistic(False)
-    self.failIf(1 != statistic[0])
+    statistics = profiler.Statistic(False)
+    self.failIf(1 != statistics["total"])
 
   def testDrawing(self):
     # Open a log file which has no valid log again.

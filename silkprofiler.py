@@ -371,26 +371,35 @@ class SilkProfiler(object):
     for entry in self.mParser.mTable:
       dists.append(float(entry[1]))
 
-    mean = 0.0
+    mean  = 0.0
     stdev = 0.0
-    maxv = 0.0
-    minv = 0.0
+    maxv  = 0.0
+    minv  = 0.0
+    cv    = 0.0
 
     total = len(self.mParser.mTable)
     if 0 != total:
-      mean = np.mean(dists)
+      mean  = np.mean(dists)
       stdev = np.std(dists)
-      maxv = np.max(dists)
-      minv = np.min(dists)
+      maxv  = np.max(dists)
+      minv  = np.min(dists)
+      if 0 != mean:
+        cv   = stdev * 100 / mean
 
     if doPrint:
-      print "Total samples      = " + str(total)
-      print "Max value          = " + str(maxv)
-      print "Min value          = " + str(minv)
-      print "Mean value         = " + str(mean)
-      print "Standard deviation = " + str(stdev)
+      print "Total samples            = " + str(total)
+      print "Max value                = " + str(maxv)
+      print "Min value                = " + str(minv)
+      print "Mean value               = " + str(mean)
+      print "Standard deviation       = " + str(stdev)
+      print "Coefficient of variation = " + str(cv)
 
-    return (total, mean, stdev, maxv, minv)
+    return {  "total"  : total,
+              "mean"   : mean,
+              "stdev"  : stdev,
+              "max"    : maxv,
+              "min"    : minv,
+              "cv"     : cv }
 
   def Draw(self, histogram = Histogram.Line):
     yPlots = []

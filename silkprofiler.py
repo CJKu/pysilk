@@ -371,10 +371,10 @@ class SilkProfiler(object):
     for entry in self.mParser.mTable:
       dists.append(float(entry[1]))
 
-    mean  = 0.0
-    stdev = 0.0
-    maxv  = 0.0
-    minv  = 0.0
+    mean  = np.nan
+    stdev = np.nan
+    maxv  = np.nan
+    minv  = np.nan
     cv    = np.nan
 
     total = len(self.mParser.mTable)

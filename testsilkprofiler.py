@@ -41,6 +41,10 @@ class TestSilkProfilerFunction(unittest.TestCase):
     profiler = SP.SilkProfiler()
     statistics = profiler.Statistic(False)
     self.failIf(0 != statistics["total"])
+    self.failIf(True != np.isnan(statistics["mean"]))
+    self.failIf(True != np.isnan(statistics["stdev"]))
+    self.failIf(True != np.isnan(statistics["max"]))
+    self.failIf(True != np.isnan(statistics["min"]))
     self.failIf(True != np.isnan(statistics["cv"]))
 
     # Parse a log file which has only one valid line log
@@ -63,10 +67,11 @@ class TestSilkProfilerFunction(unittest.TestCase):
     self.failIf(False == profiler.Open("sample/testpattern_pass.pattern", "sample/testlog_zero.log"))
     statistics = profiler.Statistic(False)
     self.failIf(0 != statistics["total"])
-    self.failIf(0 != statistics["mean"])
-    self.failIf(0 != statistics["stdev"])
-    self.failIf(0 != statistics["max"])
-    self.failIf(0 != statistics["min"])
+    self.failIf(True != np.isnan(statistics["mean"]))
+    self.failIf(True != np.isnan(statistics["stdev"]))
+    self.failIf(True != np.isnan(statistics["max"]))
+    self.failIf(True != np.isnan(statistics["min"]))
+    self.failIf(True != np.isnan(statistics["cv"]))
 
     # Repeat parsing logs. Make sure context is independent between two parsing
     # Keep loading testlog_one two times, total samples should not be accumulated.

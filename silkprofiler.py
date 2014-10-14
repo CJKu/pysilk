@@ -196,10 +196,10 @@ class SilkDrawer(object):
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
     # mean line
-    ax.axhline(y = statistics["mean"], linewidth= 1, color='red', ls = '--')
+    ax.axhline(y = statistics["mean"], label='mean', linewidth= 1, color='red', ls = '--')
     # stdev line
-    ax.axhline(y = upperBound, linewidth= 1, color='green', ls = '--')
-    ax.axhline(y = lowerBound, linewidth= 1, color='green', ls = '--')
+    ax.axhline(y = upperBound, label='+stdev', linewidth= 1, color='green', ls = '--')
+    ax.axhline(y = lowerBound, label='-stdev', linewidth= 1, color='green', ls = '--')
     # hot zone area rectangle
     hotZoneTrans = mtransforms.blended_transform_factory(ax.transAxes, ax.transData)
     hotZone = patches.Rectangle((0, lowerBound), width = 1,
@@ -232,6 +232,7 @@ class SilkDrawer(object):
         markersize=4, transform = affine)
 
     # Draw decorations.
+    ax.legend(loc='upper right')
     ax.grid(True)
     ax.set_title(decorations[0])
     ax.set_xlabel(decorations[1])

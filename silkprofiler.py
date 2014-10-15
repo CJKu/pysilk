@@ -31,34 +31,23 @@ class SilkParser(object):
     self.mYLabel = ""       # y-axis label
     self.mTitle = ""        # diagram title
     self.mTable = []        # Store sample data
+    self.mStatisticTable = False # display statistic table
+    self.mYLimit="NOLIMIT"
+    self.mYUpperbound=0
+    self.myLowerbound=0
 
-  def Parse(self, log, pattern):
-    """
-      Parse patterFile to fetch pattern strings to match logFile.
-      Depend on pattern strings aquired from patternFile, fetch matched line log
-      from logFile.
-    """
+  def ParsePattern(self, pattern):
     # Clear context before parsing.
-    self.mPattern = None    # match pattern
-    self.mXLabel = ""       # x-axis label
-    self.mYLabel = ""       # y-axis label
-    self.mTitle = ""        # diagram title
-    self.mTable = []        # Store sample data
+    self.mPattern = None
+    self.mXLabel = ""
+    self.mYLabel = ""
+    self.mTitle = ""
+    self.mTable = []
+    self.mStatisticTable = False
+    self.mYLimit="NOLIMIT"
+    self.mYUpperbound=0
+    self.myLowerbound=0
 
-    # Parsing
-    if False == self._ParsePattern(pattern):
-      return False
-    if False == self._ParseLog(log):
-      return False
-
-    return True
-
-  def _ParsePattern(self, pattern):
-    """
-    1. Read pattern string
-    2. Read x-axis label string
-    2. Read y-axis label string
-    """
     cp = ConfigParser.ConfigParser()
     cp.read(pattern)
 
@@ -85,9 +74,30 @@ class SilkParser(object):
     except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
       pass
 
+    try:
+      self.mStatisticTable = cp.getboolean('diagram', 'drawStatistic')
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+      pass
+
+    try:
+      self.mYLimit = cp.get('diagram', 'yLimit')
+    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+      pass
+
+    if self.mYLimit == "FIXED" or self.mYLimit == "STDEVMULTIPLE":
+      try:
+        self.mYUpperbound = cp.getfloat('diagram', 'yUpperbound')
+      except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+        return False
+
+      try:
+        self.mYLowerbound = cp.getfloat('diagram', 'yLowerbound')
+      except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
+        return False
+
     return (self.mPattern != None)
 
-  def _ParseLog(self, log):
+  def ParseLog(self, log):
     self.mMatches = 0
     self.mMismatches = 0
 
@@ -182,26 +192,39 @@ class SilkDrawer(object):
   """
   Histogram drawer
   """
-  def Line(self, yPlots, decorations, statistics):
+  def Line(self, yPlots, config, statistics):
     """
       Draw line histogram.
     """
-    # Draw sample trend diagram and smoothness diagram
-    ax1 = plt.subplot2grid((4, 4), (0, 0), rowspan = 3, colspan = 4)
-    self._DrawSampleAxes(yPlots, ax1, decorations, statistics)
+    # active figure 0
+    fig = plt.figure(0)
 
-    ax2 = plt.subplot2grid((4, 4), (3, 0), colspan = 3)
-    self._DrawSmoothnessAxes(yPlots, ax2, decorations, statistics)
+    # Adjust margin
+    params = fig.subplotpars
+    params.update(left = 0.05, right = 0.95, top = 0.95, bottom = 0.05)
+
+    # Draw sample trend axes
+    ax1 = plt.subplot2grid((4, 4), (0, 0), rowspan = 3, colspan = 4)
+    self._DrawSampleAxes(yPlots, ax1, config, statistics)
+
+    # Draw smoothness diagram axes
+    if True ==  config["drawTable"]:
+      ax2 = plt.subplot2grid((4, 4), (3, 0), colspan = 3)
+    else:
+      ax2 = plt.subplot2grid((4, 4), (3, 0), colspan =4)
+
+    self._DrawSmoothnessAxes(yPlots, ax2, config, statistics)
 
     # Draw statistic table
-    ax3 = plt.subplot2grid((4, 4), (3, 3))
-    ax3.set_axis_off()
-    self._DrawStatisticTable(ax3, statistics)
+    if True ==  config["drawTable"]:
+      ax3 = plt.subplot2grid((4, 4), (3, 3))
+      ax3.set_axis_off()
+      self._DrawStatisticTable(ax3, statistics)
 
     # Display figures
     plt.show()
 
-  def Bar(self, yPlots, decorations, statistics):
+  def Bar(self, yPlots, config, statistics):
     """
       Draw bar histogram
     """
@@ -237,8 +260,8 @@ class SilkDrawer(object):
     barPositions = np.linspace(0., 10., 10).tolist()
     plt.bar(barPositions, accounts)
 
-    plt.title(decorations[0])
-    plt.xlabel(decorations[1])
+    plt.title(config["title"])
+    plt.xlabel(config["xlabel"])
     plt.ylabel("amount")
     plt.show()
 
@@ -251,16 +274,20 @@ class SilkDrawer(object):
                 [statistics["min"]],
                 [statistics["cv"]]
                ]
+
+    colors = plt.cm.BuPu(np.linspace(0, 0.5, len(table_vals)))
     the_table = plt.table(cellText=table_vals,
-                          colWidths = [1],
+                          colWidths = [0.4],
+                          rowColours=colors,
                           rowLabels = row_labels,
                           cellLoc = 'center',
-                          loc='center right')
-    the_table.set_fontsize(40)
-    the_table.scale(1, 1)
+                          loc='center')
+    #the_table.set_fontsize(80)
+    the_table.scale(2, 1)
     ax.add_table(the_table)
+    ax.set_title('Statistics')
 
-  def _DrawSmoothnessAxes(self, yPlots, ax, decorations, statistics):
+  def _DrawSmoothnessAxes(self, yPlots, ax, config, statistics):
     upperBound = 0
     lowerBound = 0
     y = []
@@ -281,10 +308,10 @@ class SilkDrawer(object):
 
     # Draw decorations.
     ax.legend(loc='best', framealpha=0.5)
-    ax.set_xlabel(decorations[1])
+    ax.set_xlabel(config["xlabel"])
     ax.set_ylabel('smoothness')
 
-  def _DrawSampleAxes(self, yPlots, ax, decorations, statistics):
+  def _DrawSampleAxes(self, yPlots, ax, config, statistics):
     # Draw mean and stddev decoration
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
@@ -299,26 +326,20 @@ class SilkDrawer(object):
     # stdev line
     ax.axhline(y = upperBound, label='+- stdev', linewidth= 1, color='black', alpha=0.5, ls = '-')
     ax.axhline(y = lowerBound, linewidth= 1, color='black', alpha=0.5, ls = '-')
-    # y-axis upper and lower bound
-    upperBound = min(statistics["mean"] + (3 * statistics["stdev"]), statistics["max"])
-    lowerBound = max(statistics["mean"] - (3 * statistics["stdev"]), statistics["min"])
-    ax.set_ylim(lowerBound, upperBound)
 
-    '''
-    # Set yaxis locator
-    plt.gca().set_yscale('meanscale', mean=mean, maxv=maxv, minv=minv)
-    lowserStride = (mean - minv) / 5
-    upperStride = (maxv - mean) / 5
-    ax.yaxis.set_major_locator(
-      FixedLocator(
-        np.arange(minv, mean, lowserStride).tolist() +
-        np.arange(mean, maxv + upperStride, upperStride).tolist()
-      )
-    )
-    ax.yaxis.set_transform(affine)
-    '''
+    # According to config setting, setup limitation of y-axis
+    if config["yLimit"] == "FIXED":
+      upperBound = config["yUpperbound"]
+      lowerBound = config["yLowerbound"]
+      ax.set_ylim(lowerBound, upperBound)
+    elif config["yLimit"] == "STDEVMULTIPLE":
+      upperBound = min(statistics["mean"] + (config["yUpperbound"] * statistics["stdev"]),
+                   statistics["max"])
+      lowerBound = max(statistics["mean"] - (config["yLowerbound"] * statistics["stdev"]),
+                   statistics["min"])
+      ax.set_ylim(lowerBound, upperBound)
 
-    # Draw line
+    # Draw sample plot
     affine = mtransforms.Affine2D().translate(0, 0) + ax.transData
     ax.plot(yPlots, color = 'blue', linestyle = 'solid', linewidth = 1, transform = affine)
         # , marker='o', markerfacecolor='red', markeredgecolor='blue',
@@ -326,15 +347,17 @@ class SilkDrawer(object):
     xPlots = np.arange(0, len(yPlots), 1)
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
-    ax.fill_between(xPlots, upperBound, yPlots, where=yPlots>=upperBound, facecolor = 'blue', interpolate = True, alpha = 0.7)
-    ax.fill_between(xPlots, lowerBound, yPlots, where=yPlots<=lowerBound, facecolor = 'blue', interpolate = True, alpha = 0.7)
+    ax.fill_between(xPlots, upperBound, yPlots, where=yPlots>=upperBound,
+                    facecolor = 'blue', interpolate = True, alpha = 0.7)
+    ax.fill_between(xPlots, lowerBound, yPlots, where=yPlots<=lowerBound,
+                    facecolor = 'blue', interpolate = True, alpha = 0.7)
 
     # Draw decorations.
     ax.legend(loc='best', framealpha=0.5)
     ax.grid(True)
-    ax.set_title(decorations[0])
-    ax.set_xlabel(decorations[1])
-    ax.set_ylabel(decorations[2])
+    ax.set_title(config["title"])
+    ax.set_xlabel(config["ylabel"])
+    ax.set_ylabel(config["xlabel"])
 
   def _DetermineFigureSize(self, samples):
     '''
@@ -411,7 +434,13 @@ class SilkProfiler(object):
       raise IOError("Log file does not exist")
 
     # File resource are ready. Start to parse source files
-    return self.mParser.Parse(log, pattern)
+    success = self.mParser.ParsePattern(pattern)
+    if False == success:
+      return success
+
+    success = self.mParser.ParseLog(log)
+
+    return success
 
   def DumpSamples(self, to = None):
     """
@@ -469,7 +498,14 @@ class SilkProfiler(object):
     for entry in self.mParser.mTable:
       yPlots.append(float(entry[1]))
 
-    decorations = (self.mParser.mTitle, self.mParser.mXLabel, self.mParser.mYLabel)
+    config = { "title":  self.mParser.mTitle,
+               "xlabel": self.mParser.mXLabel,
+               "ylabel": self.mParser.mYLabel,
+               "drawTable": self.mParser.mStatisticTable,
+               "yLimit": self.mParser.mYLimit,
+               "yUpperbound": self.mParser.mYUpperbound,
+               "yLowerbound": self.mParser.mYLowerbound}
+
     statistics = self.Statistic(False)
 
     if 0 == len(yPlots):
@@ -477,12 +513,12 @@ class SilkProfiler(object):
       return False;
 
     if histogram == Histogram.Line:
-      self.mDrawer.Line(yPlots, decorations, statistics)
+      self.mDrawer.Line(yPlots, config, statistics)
     elif histogram == Histogram.Bar:
-      self.mDrawer.Bar(yPlots, decorations, statistics)
+      self.mDrawer.Bar(yPlots, config, statistics)
     elif histogram == Histogram.All:
-      self.mDrawer.Line(yPlots, decorations, statistics)
-      self.mDrawer.Bar(yPlots, decorations, statistics)
+      self.mDrawer.Line(yPlots, config, statistics)
+      self.mDrawer.Bar(yPlots, config, statistics)
 
     return True
 

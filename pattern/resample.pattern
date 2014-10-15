@@ -1,9 +1,30 @@
 [diagram]
-# x-axis label
-xlabel=frame number
-# y-axis lable
-ylabel=movement distance
+# Diagram title.
 title=Touch Event Resample
+# X-axis label
+xlabel=frame number
+# Y-axis lable
+ylabel=movement distance
+
+# Display statistic data in figure.
+# True: show statistic table
+# False: default value hide statitic table
+drawStatistic=True
+
+# Y-Axis limitation type
+# NOLIMIT
+#   Default value. There is no limitation for y-axis
+# FIXED
+#   Upperbound and lowerbound of y-axis are fixed number.
+#   yUpperbound and yLowerbound must be provided.
+#   yUpperbound must be larger than  yLowerbound.
+# STDEVMULTIPLE
+#   upperbound and lowerbound of y-axis multiple of abs(stddev - mean).
+#   yUpperbound and yLowerbound must be provided.
+yLimit=FIXED
+yUpperbound=7
+yLowerbound=3
+
 [pattern]
 # group name y = y-axis of trend diagram
 # group name x = x-axis of trend diagram

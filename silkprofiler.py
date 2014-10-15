@@ -26,39 +26,31 @@ class SilkParser(object):
   2. Parse log file
   """
   def __init__(self):
-    self.mPattern = None    # match pattern
-    self.mXLabel = ""       # x-axis label
-    self.mYLabel = ""       # y-axis label
-    self.mTitle = ""        # diagram title
-    self.mTable = []        # Store sample data
-    self.mStatisticTable = False # display statistic table
-    self.mYLimit="NOLIMIT"
-    self.mYUpperbound=0
-    self.myLowerbound=0
+    self._ResetConfig()
 
-  def ParsePattern(self, pattern):
+  def GetConfig(self):
+    return { "title":       self.mTitle,
+             "xlabel":      self.mXLabel,
+             "ylabel":      self.mYLabel,
+             "drawTable":   self.mStatisticTable,
+             "yLimit":      self.mYLimit,
+             "yUpperbound": self.mYUpperbound,
+             "yLowerbound": self.mYLowerbound}
+
+  def ParseConfig(self, config):
     # Clear context before parsing.
-    self.mPattern = None
-    self.mXLabel = ""
-    self.mYLabel = ""
-    self.mTitle = ""
-    self.mTable = []
-    self.mStatisticTable = False
-    self.mYLimit="NOLIMIT"
-    self.mYUpperbound=0
-    self.myLowerbound=0
+    self._ResetConfig()
 
     cp = ConfigParser.ConfigParser()
-    cp.read(pattern)
+    cp.read(config)
 
-    # [Mandatory] Read pattern string and create pattern object accordingly
+    # [Mandatory] Read config string and create config object accordingly
     try:
       patternOption = cp.get('pattern', 'pattern')
       self.mPattern = re.compile(patternOption)
     except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
       return False
 
-    # [Option] Read xlabel and ylabel
     try:
       self.mXLabel = cp.get('diagram', 'xlabel')
     except (ConfigParser.NoOptionError, ConfigParser.NoSectionError) as e:
@@ -98,6 +90,9 @@ class SilkParser(object):
     return (self.mPattern != None)
 
   def ParseLog(self, log):
+    '''
+    Parse source log and put matched lines into self.mTable
+    '''
     self.mMatches = 0
     self.mMismatches = 0
 
@@ -106,17 +101,30 @@ class SilkParser(object):
         matched = re.match(self.mPattern, line)
         if matched:
           try:
-            self.mMatches += 1
             x = matched.group('x')
             y = matched.group('y')
             entry = (x, y)
             self.mTable.append(entry)
+
+            self.mMatches += 1
           except IndexError as e:
             print "Parse Error : " + line
         else:
           self.mMismatches += 1
 
     return True
+
+  def _ResetConfig(self):
+    self.mPattern = None    # match pattern
+    self.mXLabel = ""       # x-axis label
+    self.mYLabel = ""       # y-axis label
+    self.mTitle = ""        # diagram title
+    self.mTable = []        # Store sample data
+    self.mStatisticTable = False # display statistic table
+    self.mYLimit="NOLIMIT"
+    self.mYUpperbound=0
+    self.myLowerbound=0
+
 '''
 class MeanScale(mscale.ScaleBase):
   name = 'meanscale'
@@ -391,14 +399,14 @@ class SilkProfiler(object):
     self.mParser = SilkParser()
     self.mDrawer = SilkDrawer()
 
-  def Open(self, pattern, log):
+  def Open(self, config, log):
     """
     Open a log file and parse this log file depend on patterns defined in pattern
     file.
     >>> pf.Open(1, 1)
     Traceback (most recent call last):
       ...
-    TypeError: pattern Must be a string!
+    TypeError: config Must be a string!
 
     >>> pf.Open("", 1)
     Traceback (most recent call last):
@@ -424,17 +432,17 @@ class SilkProfiler(object):
     True
     """
     # Validate parameters
-    if not isinstance(pattern, str):
-       raise TypeError("pattern Must be a string!")
+    if not isinstance(config, str):
+       raise TypeError("config Must be a string!")
     if not isinstance(log, str):
        raise TypeError("source Must be a string!")
-    if False == os.path.exists(pattern):
+    if False == os.path.exists(config):
       raise IOError("Pattern file does not exist")
     if False == os.path.exists(log):
       raise IOError("Log file does not exist")
 
     # File resource are ready. Start to parse source files
-    success = self.mParser.ParsePattern(pattern)
+    success = self.mParser.ParseConfig(config)
     if False == success:
       return success
 
@@ -494,23 +502,16 @@ class SilkProfiler(object):
               "cv"     : cv }
 
   def Draw(self, histogram = Histogram.Line):
+    if 0 == len(self.mParser.mTable):
+      print "There is no valid sample in log file."
+      return False;
+
     yPlots = []
     for entry in self.mParser.mTable:
       yPlots.append(float(entry[1]))
 
-    config = { "title":  self.mParser.mTitle,
-               "xlabel": self.mParser.mXLabel,
-               "ylabel": self.mParser.mYLabel,
-               "drawTable": self.mParser.mStatisticTable,
-               "yLimit": self.mParser.mYLimit,
-               "yUpperbound": self.mParser.mYUpperbound,
-               "yLowerbound": self.mParser.mYLowerbound}
-
+    config     = self.mParser.GetConfig()
     statistics = self.Statistic(False)
-
-    if 0 == len(yPlots):
-      print "There is no valid sample in log file."
-      return False;
 
     if histogram == Histogram.Line:
       self.mDrawer.Line(yPlots, config, statistics)

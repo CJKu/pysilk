@@ -1,0 +1,31 @@
+[diagram]
+# x-axis label
+xlabel=frame number
+# y-axis lable
+ylabel=movement distance
+title=Color Layer movement
+drawStatistic=True
+# Y-Axis limitation type
+# NOLIMIT
+#   Default value.
+# FIXED
+#   upperbound and lowerbound of y-axis are fixed number.
+#   yUpperbound and yLowerbound must be provided.
+#   yUpperbound must be larger than  yLowerbound.
+# STDEVMULTIPLE
+#   upperbound and lowerbound of y-axis multiple of stddev.
+#   yUpperbound and yLowerbound must be provided.
+#
+yLimit=FIXED
+yUpperbound=7
+yLowerbound=3
+
+[pattern]
+# group name y = y-axis of trend diagram
+# group name x = x-axis of trend diagram
+# Content type in x-group can be anything.
+# Content type in y-groud must be floart or integer.
+pattern=.*Silk ColorLayer.*, *(?P<x>[0-9]+) *, *(?P<y>[.0-9]+) *,?.*
+start=.*silk start.*
+end=.*silk end.*
+

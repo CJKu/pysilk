@@ -20,7 +20,7 @@ $ sudo pip install pyzmq
 $ sudo pip install Pygments
 Mac setup... Oops...I have forgotten
 ```
-Although iPython is not a must have, I strongly recommend you install this advanced shell, which has qtconsole and better integration with matplot. In qtconsol, output histogram of matplot is embedded inside console
+Although iPython is not a must have, I strongly recommend you install this advanced shell, which has qtconsole and better integration with matplot.
 ![img](https://github.com/CJKu/pysilk/blob/master/img/ipython.png)
 
 # Steps

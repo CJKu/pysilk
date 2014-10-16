@@ -4,7 +4,7 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 import decimal
-import pylab
+#import pylab
 import ConfigParser
 from numpy import ma
 from matplotlib import scale as mscale
@@ -123,84 +123,13 @@ class SilkParser(object):
     self.mStatisticTable = False # display statistic table
     self.mYLimit="NOLIMIT"
     self.mYUpperbound=0
-    self.myLowerbound=0
-
-'''
-class MeanScale(mscale.ScaleBase):
-  name = 'meanscale'
-
-  def __init__(self, axis, **kwargs):
-    mscale.ScaleBase.__init__(self)
-
-    self.mean = kwargs.pop("mean")
-    self.maxv = kwargs.pop("maxv")
-    self.minv = kwargs.pop("minv")
-
-  def get_transform(self):
-    #return mtransforms.IdentityTransform(self)
-    #return self.LantitudeTransform((self.mean, self.maxv, self.minv))
-    affine = mtransforms.Affine2D()
-    affinenslate(0, 1)
-    return affine
-
-  def set_default_locators_and_formatters(self, axis):
-    lowserStride = (self.mean - self.minv) / 5
-    upperStride = (self.maxv - self.mean) / 5
-
-    # Define ycks
-    axis.set_major_locator(
-      FixedLocator(
-        np.arange(self.minv, self.mean, lowserStride).tolist() +
-        np.arange(self.mean, self.maxv + upperStride, upperStride).tolist()
-      )
-    )
-    # I don't really care about formatter, at last, for now
-
-  #def limit_range_for_scale(self, vmin, vmax, minpos):
-  #    return self.minv, self.maxv
-
-  class LantitudeTransform(mtransforms.Affine2D):
-    input_dims = 1
-    output_dims = 1
-    is_separable = True
-
-    def __init__(self, statistic):
-      mtransforms.Transform.__init__(self)
-      self.statistic = statistic
-
-    def transform_affine(self, a):
-        print a
-        return a
-    #def transform_non_affine(self, a):
-    #  print a
-    #  return a
-      #return np.log(np.abs(np.tan(a) + 1.0 / np.cos(a)))
-
-    def inverted(self):
-      return MeanScale.InvertedLatitudeTransform(self.statistic)
-
-  class InvertedLantitudeTransform(mtransforms.Affine2D):
-    input_dims = 1
-    output_dims = 1
-    is_separable = True
-
-    def __init__(self, statistic):
-      mtransforms.Transform.__init__(self)
-      self.statistic = statistic
-
-    def transform_affine(self, a):
-      #return np.arctan(np.sinh(a))
-      return a
-
-    def inverted(self):
-      return MeanScale.LatitudeTransform(self.statistic)
-'''
+    self.mYLowerbound=0
 
 class SilkDrawer(object):
   """
   Histogram drawer
   """
-  def Line(self, yPlots, config, statistics):
+  def Line(self, plots, config, statistics, figSize = (0, 0)):
     """
       Draw line histogram.
     """
@@ -213,7 +142,7 @@ class SilkDrawer(object):
 
     # Draw sample trend axes
     ax1 = plt.subplot2grid((4, 4), (0, 0), rowspan = 3, colspan = 4)
-    self._DrawSampleAxes(yPlots, ax1, config, statistics)
+    self._DrawSampleAxes(plots, ax1, config, statistics)
 
     # Draw smoothness diagram axes
     if True ==  config["drawTable"]:
@@ -221,7 +150,7 @@ class SilkDrawer(object):
     else:
       ax2 = plt.subplot2grid((4, 4), (3, 0), colspan =4)
 
-    self._DrawSmoothnessAxes(yPlots, ax2, config, statistics)
+    self._DrawSmoothnessAxes(plots, ax2, config, statistics)
 
     # Draw statistic table
     if True ==  config["drawTable"]:
@@ -229,28 +158,29 @@ class SilkDrawer(object):
       ax3.set_axis_off()
       self._DrawStatisticTable(ax3, statistics)
 
-    # Display figures
-    plt.show()
+    if 0 != figSize[0] and 0 != figSize[1]:
+      dpi = fig.get_dpi()
+      fig.set_size_inches((figSize[0] / dpi, figSize[1] / dpi), forward = True)
 
-  def Bar(self, yPlots, config, statistics):
+  def Bar(self, plots, config, statistics, figSize = (0, 0)):
     """
       Draw bar histogram
     """
     self._DetermineFigureSize(10)
-    minPlot = np.min(yPlots)
-    maxPlot = np.max(yPlots)
+    minPlot = np.min(plots)
+    maxPlot = np.max(plots)
 
-    # All yPlots have the same value. Perfect condition
+    # All plots have the same value. Perfect condition
     if minPlot == maxPlot:
-      plt.bar([2], [len(yPlots)])
+      plt.bar([2], [len(plots)])
       return
 
-    # Divide yPlots into 10 groups
+    # Divide plots into 10 groups
     # it's.... so uglyyyyyy... find a better way.
     ranges = np.linspace(minPlot, maxPlot, 10).tolist()
 
     accounts = [0] * 10
-    for plot in yPlots:
+    for plot in plots:
       for i,n in enumerate(ranges):
         if plot <= n:
           accounts[i] += 1
@@ -295,14 +225,14 @@ class SilkDrawer(object):
     ax.add_table(the_table)
     ax.set_title('Statistics')
 
-  def _DrawSmoothnessAxes(self, yPlots, ax, config, statistics):
+  def _DrawSmoothnessAxes(self, plots, ax, config, statistics):
     upperBound = 0
     lowerBound = 0
     y = []
-    for index, value in enumerate(yPlots) :
+    for index, value in enumerate(plots) :
       diff = 0
       if 0 < index:
-        diff = value - yPlots[index - 1]
+        diff = value - plots[index - 1]
       if diff > upperBound:
         upperBound = diff
       elif diff < lowerBound:
@@ -315,11 +245,11 @@ class SilkDrawer(object):
     ax.bar(x, y, label = 'y diff', color = 'red', edgecolor = 'red')
 
     # Draw decorations.
-    ax.legend(loc='best', framealpha=0.5)
+    ax.legend(loc='best') #, framealpha=0.5)
     ax.set_xlabel(config["xlabel"])
     ax.set_ylabel('smoothness')
 
-  def _DrawSampleAxes(self, yPlots, ax, config, statistics):
+  def _DrawSampleAxes(self, plots, ax, config, statistics):
     # Draw mean and stddev decoration
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
@@ -330,9 +260,11 @@ class SilkDrawer(object):
             transform = hotZoneTrans, alpha = 0.3, color = 'yellow')
     ax.add_patch(hotZone)
     # mean line
-    ax.axhline(y = statistics["mean"], label='mean', linewidth= 1, color='red', ls = '--')
+    ax.axhline(y = statistics["mean"], label='mean', linewidth= 1,
+               color='red', ls = '--')
     # stdev line
-    ax.axhline(y = upperBound, label='+- stdev', linewidth= 1, color='black', alpha=0.5, ls = '-')
+    ax.axhline(y = upperBound, label='+- stdev', linewidth= 1, color='black',
+               alpha=0.5, ls = '-')
     ax.axhline(y = lowerBound, linewidth= 1, color='black', alpha=0.5, ls = '-')
 
     # According to config setting, setup limitation of y-axis
@@ -349,29 +281,28 @@ class SilkDrawer(object):
 
     # Draw sample plot
     affine = mtransforms.Affine2D().translate(0, 0) + ax.transData
-    ax.plot(yPlots, color = 'blue', linestyle = 'solid', linewidth = 1, transform = affine)
-        # , marker='o', markerfacecolor='red', markeredgecolor='blue',
-        # markeredgewidth=1,markersize=4)
-    xPlots = np.arange(0, len(yPlots), 1)
+    ax.plot(plots, color = 'blue', linestyle = 'solid', linewidth = 1, transform = affine)
+
+    xPlots = np.arange(0, len(plots), 1)
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
-    ax.fill_between(xPlots, upperBound, yPlots, where=yPlots>=upperBound,
+    ax.fill_between(xPlots, upperBound, plots, where=plots>=upperBound,
                     facecolor = 'blue', interpolate = True, alpha = 0.7)
-    ax.fill_between(xPlots, lowerBound, yPlots, where=yPlots<=lowerBound,
+    ax.fill_between(xPlots, lowerBound, plots, where=plots<=lowerBound,
                     facecolor = 'blue', interpolate = True, alpha = 0.7)
 
     # Draw decorations.
-    ax.legend(loc='best', framealpha=0.5)
+    ax.legend(loc='best') #, framealpha=0.5)
     ax.grid(True)
     ax.set_title(config["title"])
-    ax.set_xlabel(config["ylabel"])
-    ax.set_ylabel(config["xlabel"])
+    ax.set_xlabel(config["xlabel"])
+    ax.set_ylabel(config["ylabel"])
 
   def _DetermineFigureSize(self, samples):
     '''
     A figure in matplotlib means the whole window in the user interface.
     '''
-    F = pylab.gcf()
+    F = plt.gcf()
     DPI = F.get_dpi()
     DefaultSize = F.get_size_inches()
 
@@ -462,10 +393,7 @@ class SilkProfiler(object):
 
   def Statistic(self, doPrint = True):
     """
-      Print statistic data on stdout.
-      1. Total samples: number of silk line-log
-      2. stddev
-      3. mean value
+    Gather statistic data of parsed log file
     """
     dists = []
     for entry in self.mParser.mTable:
@@ -502,33 +430,68 @@ class SilkProfiler(object):
               "cv"     : cv }
 
   def Draw(self, histogram = Histogram.Line):
+    '''
+    figSize: define the size of figure in pixel unit.
+    '''
     if 0 == len(self.mParser.mTable):
-      print "There is no valid sample in log file."
       return False;
 
-    yPlots = []
+    plots = []
     for entry in self.mParser.mTable:
-      yPlots.append(float(entry[1]))
+      plots.append(float(entry[1]))
 
     config     = self.mParser.GetConfig()
     statistics = self.Statistic(False)
 
     if histogram == Histogram.Line:
-      self.mDrawer.Line(yPlots, config, statistics)
+      self.mDrawer.Line(plots, config, statistics)
     elif histogram == Histogram.Bar:
-      self.mDrawer.Bar(yPlots, config, statistics)
+      self.mDrawer.Bar(plots, config, statistics)
     elif histogram == Histogram.All:
-      self.mDrawer.Line(yPlots, config, statistics)
-      self.mDrawer.Bar(yPlots, config, statistics)
+      self.mDrawer.Line(plots, config, statistics)
+      self.mDrawer.Bar(plots, config, statistics)
+    else:
+      return False
+
+    plt.show()
 
     return True
 
-  def SaveTo(self, html):
-    """
-      1. Save matplot image
-      2. Save mTable in HTML table
-      3. Save statistic data.
-    """
+  def SaveHistogram(self, histogram, output, figSize = (0, 0)):
+    '''
+    figSize: define the size of figure in pixel unit.
+    output: the output filename of generated histogram.
+    '''
+    if 0 == len(self.mParser.mTable):
+      return False;
+
+    # Create target folder if not exists
+    dirname = os.path.dirname(output)
+    if 0 != len(dirname) and False == os.path.exists(dirname):
+      os.mkdir(dirname)
+
+    # Remove the output file if exists
+    if True == os.path.exists(output):
+      os.remove(output)
+
+    plots = []
+    for entry in self.mParser.mTable:
+      plots.append(float(entry[1]))
+
+    config     = self.mParser.GetConfig()
+    statistics = self.Statistic(False)
+
+    if histogram == Histogram.Line:
+      self.mDrawer.Line(plots, config, statistics, figSize)
+      plt.savefig(output)
+    elif histogram == Histogram.Bar:
+      self.mDrawer.Bar(plots, config, statistics, figSize)
+      plt.savefig(output)
+    elif histogram == Histogram.All:
+      self.mDrawer.Line(plots, config, statistics, figSize)
+      plt.savefig(output)
+      self.mDrawer.Bar(plots, config, statistics, figSize)
+      plt.savefig(output)
 
     return True
 

@@ -68,20 +68,18 @@ Standard deviation = 0.0145458964579
 ####doctest
 ```
 $ cd /path/to/pysilk
-$ python testsilkprofiler.py -v
-   ...
-   1 items passed all tests:
-       4 tests in __main__.SilkProfiler.Open
-   4 tests in 18 items.
-   4 passed and 0 failed.
-   Test passed.
+$ python silkprofiler.py -v
+$ python silkreportgenerator.py -v
 ```
 
 ####unittest
 To run test case, simply execute testsilkprofiler.py
 ```
 $ cd /path/to/pysilk
+# Run SilkProfiler testing suite
 $ python testsilkprofiler.py
+# Run SilkReportGenerator testing suite
+$ python testsilkgenerator.py
 ....
 ----------------------------------------------------------------------
 Ran 4 tests in 0.002s

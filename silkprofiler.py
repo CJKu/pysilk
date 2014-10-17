@@ -142,17 +142,15 @@ class SilkDrawer(object):
 
     # Draw sample trend axes
     ax1 = plt.subplot2grid((4, 4), (0, 0), rowspan = 3, colspan = 4)
-    self._DrawSampleAxes(plots, ax1, config, statistics)
+    self._DrawSampleAxis(plots, ax1, config, statistics)
 
     # Draw smoothness diagram axes
-    if True ==  config["drawTable"]:
-      ax2 = plt.subplot2grid((4, 4), (3, 0), colspan = 3)
-    else:
-      ax2 = plt.subplot2grid((4, 4), (3, 0), colspan =4)
+    ax2 = plt.subplot2grid((4, 4), (3, 0),
+                           colspan = (3 if config["drawTable"] else 4))
 
-    self._DrawSmoothnessAxes(plots, ax2, config, statistics)
+    self._DrawSmoothnessAxis(plots, ax2, config, statistics)
 
-    # Draw statistic table
+    # Draw statistic table if needed.
     if True ==  config["drawTable"]:
       ax3 = plt.subplot2grid((4, 4), (3, 3))
       ax3.set_axis_off()
@@ -166,7 +164,6 @@ class SilkDrawer(object):
     """
       Draw bar histogram
     """
-    self._DetermineFigureSize(10)
     minPlot = np.min(plots)
     maxPlot = np.max(plots)
 
@@ -225,7 +222,7 @@ class SilkDrawer(object):
     ax.add_table(the_table)
     ax.set_title('Statistics')
 
-  def _DrawSmoothnessAxes(self, plots, ax, config, statistics):
+  def _DrawSmoothnessAxis(self, plots, ax, config, statistics):
     upperBound = 0
     lowerBound = 0
     y = []
@@ -249,11 +246,11 @@ class SilkDrawer(object):
     ax.set_xlabel(config["xlabel"])
     ax.set_ylabel('smoothness')
 
-  def _DrawSampleAxes(self, plots, ax, config, statistics):
-    # Draw mean and stddev decoration
+  def _DrawSampleAxis(self, plots, ax, config, statistics):
+    # Draw mean and stddev decorations.
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
-    # hot zone area rectangle
+    # hotzone rectangle
     hotZoneTrans = mtransforms.blended_transform_factory(ax.transAxes, ax.transData)
     hotZone = patches.Rectangle((0, lowerBound), width = 1,
             height = upperBound - lowerBound,
@@ -262,7 +259,7 @@ class SilkDrawer(object):
     # mean line
     ax.axhline(y = statistics["mean"], label='mean', linewidth= 1,
                color='red', ls = '--')
-    # stdev line
+    # +-stdev line
     ax.axhline(y = upperBound, label='+- stdev', linewidth= 1, color='black',
                alpha=0.5, ls = '-')
     ax.axhline(y = lowerBound, linewidth= 1, color='black', alpha=0.5, ls = '-')
@@ -279,10 +276,11 @@ class SilkDrawer(object):
                    statistics["min"])
       ax.set_ylim(lowerBound, upperBound)
 
-    # Draw sample plot
+    # Draw samples
     affine = mtransforms.Affine2D().translate(0, 0) + ax.transData
     ax.plot(plots, color = 'blue', linestyle = 'solid', linewidth = 1, transform = affine)
 
+    # Fill solid color between sample plot and hot zone. Can be skipped.
     xPlots = np.arange(0, len(plots), 1)
     upperBound = min(statistics["mean"] + statistics["stdev"], statistics["max"])
     lowerBound = max(statistics["mean"] - statistics["stdev"], statistics["min"])
@@ -297,29 +295,6 @@ class SilkDrawer(object):
     ax.set_title(config["title"])
     ax.set_xlabel(config["xlabel"])
     ax.set_ylabel(config["ylabel"])
-
-  def _DetermineFigureSize(self, samples):
-    '''
-    A figure in matplotlib means the whole window in the user interface.
-    '''
-    F = plt.gcf()
-    DPI = F.get_dpi()
-    DefaultSize = F.get_size_inches()
-
-    # Display 300 samples, 5 seconds, in 2880-width histogram
-    # Which means distance between each sample is 2800 / 300.
-    # Keep this density unless we get more then 300 samples
-    minWidth = DefaultSize[1] * 1.618034
-    maxWidth = 2800 / DPI
-    width = maxWidth
-    fixHeight = 480 / DPI
-
-    ratio = 300.0 / float(samples)
-    if ratio > 1.0:
-      width = width / ratio
-    if width < minWidth:
-      width = minWidth
-    plt.figure(figsize=(width, fixHeight))
 
 class SilkProfiler(object):
   """
@@ -381,15 +356,16 @@ class SilkProfiler(object):
 
     return success
 
-  def DumpSamples(self, to = None):
+  def Samples(self, doPrint = True):
     """
     Print all samples on stdout
     """
-    for index, value in enumerate(self.mParser.mTable) :
-      print str(index) + ".\t" + self.mParser.mXLabel + " = " + value[0] + " / " + \
-      self.mParser.mYLabel + " = " + value[1]
-
-    return True
+    if doPrint:
+      for index, value in enumerate(self.mParser.mTable) :
+        print str(index) + ".\t" + self.mParser.mXLabel + " = " + value[0] + " / " + \
+        self.mParser.mYLabel + " = " + value[1]
+    else:
+      return self.mParser.mTable
 
   def Statistic(self, doPrint = True):
     """
@@ -421,8 +397,8 @@ class SilkProfiler(object):
       print "Mean value               = " + str(mean)
       print "Standard deviation       = " + str(stdev)
       print "Coefficient of variation = " + str(cv) + "%"
-
-    return {  "total"  : total,
+    else:
+      return {"total"  : total,
               "mean"   : mean,
               "stdev"  : stdev,
               "max"    : maxv,
@@ -433,24 +409,7 @@ class SilkProfiler(object):
     '''
     figSize: define the size of figure in pixel unit.
     '''
-    if 0 == len(self.mParser.mTable):
-      return False;
-
-    plots = []
-    for entry in self.mParser.mTable:
-      plots.append(float(entry[1]))
-
-    config     = self.mParser.GetConfig()
-    statistics = self.Statistic(False)
-
-    if histogram == Histogram.Line:
-      self.mDrawer.Line(plots, config, statistics)
-    elif histogram == Histogram.Bar:
-      self.mDrawer.Bar(plots, config, statistics)
-    elif histogram == Histogram.All:
-      self.mDrawer.Line(plots, config, statistics)
-      self.mDrawer.Bar(plots, config, statistics)
-    else:
+    if not self._RenderFigure(histogram, (0, 0)):
       return False
 
     plt.show()
@@ -462,10 +421,10 @@ class SilkProfiler(object):
     figSize: define the size of figure in pixel unit.
     output: the output filename of generated histogram.
     '''
-    if 0 == len(self.mParser.mTable):
-      return False;
-
     # Create target folder if not exists
+    if not self._RenderFigure(histogram, figSize):
+      return False
+
     dirname = os.path.dirname(output)
     if 0 != len(dirname) and False == os.path.exists(dirname):
       os.mkdir(dirname)
@@ -473,6 +432,14 @@ class SilkProfiler(object):
     # Remove the output file if exists
     if True == os.path.exists(output):
       os.remove(output)
+
+    plt.savefig(output)
+
+    return True
+
+  def _RenderFigure(self, histogram, figSize):
+    if 0 == len(self.mParser.mTable):
+      return False;
 
     plots = []
     for entry in self.mParser.mTable:
@@ -483,15 +450,13 @@ class SilkProfiler(object):
 
     if histogram == Histogram.Line:
       self.mDrawer.Line(plots, config, statistics, figSize)
-      plt.savefig(output)
     elif histogram == Histogram.Bar:
       self.mDrawer.Bar(plots, config, statistics, figSize)
-      plt.savefig(output)
     elif histogram == Histogram.All:
       self.mDrawer.Line(plots, config, statistics, figSize)
-      plt.savefig(output)
       self.mDrawer.Bar(plots, config, statistics, figSize)
-      plt.savefig(output)
+    else:
+      return False
 
     return True
 
